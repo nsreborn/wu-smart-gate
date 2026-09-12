@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>WU Smart Gate</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <style>
+    :root{
+      --purple:#5b2aa8;
+      --purple2:#311366;
+      --orange:#f58220;
+      --green:#148354;
+      --red:#c63b3b;
+      --gold:#f2c94c;
+      --bg:#f5f6fa;
+      --card:#fff;
+      --line:#e8e9ef;
+      --text:#202331;
+      --muted:#747b8d;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial,"Noto Sans Thai",sans-serif;
+      background:var(--bg);
+      color:var(--text)
+    }
+
+    header{
+      background:linear-gradient(135deg,var(--purple2),var(--purple));
+      color:white;
+      padding:16px 22px;
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:center
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center
+    }
+
+    .logo{
+      width:46px;
+      height:46px;
+      background:white;
+      color:var(--purple);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      font-weight:900
+    }
+
+    h1{font-size:20px;margin:0}
+    header small{opacity:.78}
+
+    nav{display:flex;gap:8px}
+
+    nav button{
+      background:#ffffff1c;
+      color:white
+    }
+
+    nav button.active{
+      background:white;
+      color:var(--purple)
+    }
+
+    button{
+      border:0;
+      padding:11px 15px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:800
+    }
+
+    .primary{background:var(--purple);color:white}
+    .orange{background:var(--orange);color:white}
+    .success{background:var(--green);color:white}
+    .danger{background:var(--red);color:white}
+    .ghost{background:#eef0f6;color:#303544}
+
+    main{
+      max-width:1400px;
+      margin:20px auto;
+      padding:0 16px
+    }
+
+    .page{display:none}
+    .page.active{display:block}
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.4fr .6fr;
+      gap:18px
+    }
+
+    .card{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 8px 25px #17203a0b
+    }
+
+    .card h2{
+      margin:0 0 14px;
+      font-size:18px
+    }
+
+    .camera{
+      position:relative;
+      background:#111;
+      border-radius:16px;
+      overflow:hidden;
+      aspect-ratio:16/9
+    }
+
+    video{
+      width:100%;
+      height:100%;
+      object-fit:cover
+    }
+
+    .shade{
+      position:absolute;
+      left:17%;
+      right:17%;
+      bottom:18%;
+      height:28%;
+      border:3px solid var(--gold);
+      border-radius:12px;
+      box-shadow:0 0 0 999px #0007
+    }
+
+    .shade-label{
+      position:absolute;
+      left:17%;
+      bottom:46%;
+      background:var(--gold);
+      padding:6px 10px;
+      font-weight:800;
+      border-radius:8px 8px 0 0
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin-top:12px
+    }
+
+    input,select,textarea{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:15px;
+      background:white
+    }
+
+    label{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 6px
+    }
+
+    .inline{
+      display:grid;
+      grid-template-columns:1fr 1fr auto;
+      gap:10px;
+      margin-top:14px
+    }
+
+    .result{
+      margin-top:14px;
+      border-radius:15px;
+      padding:18px;
+      background:#f0f2f7
+    }
+
+    .result.granted{
+      background:#e8f6ef;
+      border:1px solid #b9dfca
+    }
+
+    .result.denied{
+      background:#fff0f0;
+      border:1px solid #efc3c3
+    }
+
+    .plate{
+      font-size:42px;
+      font-weight:900;
+      margin:8px 0
+    }
+
+    .badge{
+      display:inline-block;
+      border-radius:999px;
+      padding:6px 10px;
+      background:#eceef4;
+      font-size:12px;
+      font-weight:900
+    }
+
+    .badge.green{background:#dff3e8;color:#0d6941}
+    .badge.red{background:#fde2e2;color:#982525}
+
+    .gate{
+      height:110px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:#2d313b;
+      color:white;
+      font-size:30px;
+      font-weight:900
+    }
+
+    .gate.open{background:var(--green)}
+    .gate.closed{background:var(--red)}
+
+    .stats{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px
+    }
+
+    .stat{
+      background:#f7f8fb;
+      border-radius:12px;
+      padding:12px
+    }
+
+    .stat small{
+      color:var(--muted)
+    }
+
+    .stat b{
+      display:block;
+      font-size:18px;
+      margin-top:3px
+    }
+
+    .formgrid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px
+    }
+
+    .full{grid-column:1/-1}
+
+    .admin-login{
+      max-width:430px;
+      margin:60px auto
+    }
+
+    .hidden{display:none!important}
+
+    .tablewrap{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:auto;
+      max-height:540px
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px
+    }
+
+    th,td{
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      white-space:nowrap
+    }
+
+    th{
+      background:#fafbfc;
+      position:sticky;
+      top:0
+    }
+
+    .mini{
+      font-size:12px;
+      color:var(--muted)
+    }
+
+    .config{
+      max-width:760px;
+      margin:30px auto
+    }
+
+    .notice{
+      background:#fff6df;
+      border:1px solid #f5dc9b;
+      padding:12px;
+      border-radius:10px;
+      margin-bottom:14px
+    }
+
+    #toast{
+      display:none;
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      padding:12px 16px;
+      color:white;
+      background:#20232b;
+      border-radius:10px;
+      z-index:999
+    }
+
+    @media(max-width:900px){
+      .grid{grid-template-columns:1fr}
+      .formgrid{grid-template-columns:1fr}
+      .inline{grid-template-columns:1fr}
+      header{align-items:flex-start;flex-direction:column}
+      nav{width:100%}
+      nav button{flex:1}
+      .plate{font-size:34px}
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">WU</div>
+    <div>
+      <h1>WU Smart Gate</h1>
+      <small>Vehicle Access Control Prototype</small>
+    </div>
+  </div>
+
+  <nav>
+    <button class="active" data-page="gatePage">จุดตรวจรถ</button>
+    <button data-page="adminPage">Admin</button>
+    <button data-page="configPage">ตั้งค่า</button>
+  </nav>
+</header>
+
+<main>
+
+<section id="configPage" class="page">
+  <div class="card config">
+    <h2>ตั้งค่าการเชื่อมต่อ</h2>
+
+    <div class="notice">
+      กรอก URL ของ Apps Script Web App และ API Key เพียงครั้งเดียว
+      ระบบจะเก็บไว้ใน Browser เครื่องนี้
+    </div>
+
+    <label>Apps Script Web App URL</label>
+    <input id="apiUrl" placeholder="https://script.google.com/macros/s/....../exec">
+
+    <label style="margin-top:12px">API Key</label>
+    <input id="apiKey" placeholder="นำ API Key จาก SETTINGS หรือ getInstallationInfo()">
+
+    <div class="toolbar">
+      <button class="primary" onclick="saveConfig()">บันทึกการตั้งค่า</button>
+      <button class="ghost" onclick="testApi()">ทดสอบการเชื่อมต่อ</button>
+    </div>
+
+    <div id="apiStatus" class="mini" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<section id="gatePage" class="page active">
+  <div class="grid">
+
+    <div class="card">
+      <h2>กล้องอ่านทะเบียนรถ</h2>
+
+      <div class="camera">
+        <video id="video" autoplay muted playsinline></video>
+        <div class="shade-label">วางป้ายทะเบียนในกรอบ</div>
+        <div class="shade"></div>
+      </div>
+
+      <canvas id="captureCanvas" class="hidden"></canvas>
+
+      <div class="toolbar">
+        <button class="primary" onclick="startCamera()">เปิดกล้อง</button>
+        <button class="orange" onclick="captureAndRead()">จับภาพ + อ่านทะเบียน</button>
+        <button class="ghost" onclick="stopCamera()">ปิดกล้อง</button>
+
+        <select id="direction" style="width:auto">
+          <option value="IN">รถเข้า</option>
+          <option value="OUT">รถออก</option>
+        </select>
+      </div>
+
+      <div class="inline">
+        <div>
+          <label>ทะเบียนรถ</label>
+          <input id="plateInput" placeholder="เช่น กข1234">
+        </div>
+
+        <div>
+          <label>จังหวัด</label>
+          <input id="provinceInput" placeholder="นครศรีธรรมราช">
+        </div>
+
+        <div style="align-self:end">
+          <button class="primary" onclick="checkNow()">ตรวจสิทธิ์</button>
+        </div>
+      </div>
+
+      <div id="ocrStatus" class="mini" style="margin-top:10px"></div>
+
+      <div id="accessResult" class="result">
+        <span class="badge">พร้อมใช้งาน</span>
+        <div class="plate">—</div>
+        <div>เปิดกล้องหรือกรอกทะเบียนเพื่อตรวจสอบ</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>สถานะประตู</h2>
+
+        <div id="gateLight" class="gate closed">
+          ปิด
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <small>Gate</small>
+            <b id="gateName">-</b>
+          </div>
+
+          <div class="stat">
+            <small>OCR</small>
+            <b id="ocrConfidence">0%</b>
+          </div>
+
+          <div class="stat">
+            <small>Mode</small>
+            <b>AUTO</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h2>ข้อมูลรถล่าสุด</h2>
+        <div id="vehicleInfo" class="mini">
+          ยังไม่มีข้อมูล
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="adminPage" class="page">
+
+  <div id="adminLogin" class="card admin-login">
+    <h2>เข้าสู่ระบบผู้ดูแล</h2>
+
+    <label>Admin PIN</label>
+    <input id="adminPin" type="password" placeholder="PIN">
+
+    <button class="primary" style="width:100%;margin-top:12px" onclick="adminLogin()">
+      เข้าสู่ระบบ
+    </button>
+  </div>
+
+  <div id="adminArea" class="hidden">
+
+    <div class="grid">
+
+      <div class="card">
+        <h2>ลงทะเบียนรถ</h2>
+
+        <input id="vehicleId" type="hidden">
+
+        <div class="formgrid">
+
+          <div>
+            <label>ทะเบียนรถ *</label>
+            <input id="fPlate">
+          </div>
+
+          <div>
+            <label>จังหวัด *</label>
+            <input id="fProvince">
+          </div>
+
+          <div>
+            <label>ชื่อเจ้าของรถ *</label>
+            <input id="fOwner">
+          </div>
+
+          <div>
+            <label>ประเภท *</label>
+            <select id="fType">
+              <option value="STAFF">บุคลากร</option>
+              <option value="STUDENT">นักศึกษา</option>
+              <option value="VISITOR">บุคคลทั่วไป</option>
+            </select>
+          </div>
+
+          <div>
+            <label>ยี่ห้อ</label>
+            <input id="fBrand">
+          </div>
+
+          <div>
+            <label>รุ่น</label>
+            <input id="fModel">
+          </div>
+
+          <div>
+            <label>สี</label>
+            <input id="fColor">
+          </div>
+
+          <div>
+            <label>โทรศัพท์</label>
+            <input id="fPhone">
+          </div>
+
+          <div>
+            <label>เริ่มใช้งาน</label>
+            <input id="fStart" type="date">
+          </div>
+
+          <div>
+            <label>หมดอายุ</label>
+            <input id="fExpire" type="date">
+          </div>
+
+          <div>
+            <label>สถานะ</label>
+            <select id="fStatus">
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+              <option value="BLACKLIST">BLACKLIST</option>
+            </select>
+          </div>
+
+          <div class="full">
+            <label>หมายเหตุ</label>
+            <textarea id="fNote"></textarea>
+          </div>
+
+        </div>
+
+        <div class="toolbar">
+          <button class="primary" onclick="saveVehicle()">บันทึก</button>
+          <button class="ghost" onclick="clearVehicleForm()">ล้างฟอร์ม</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>ควบคุมด้วยเจ้าหน้าที่</h2>
+
+        <label>ทะเบียนรถ</label>
+        <input id="manualPlate">
+
+        <label style="margin-top:10px">จังหวัด</label>
+        <input id="manualProvince">
+
+        <div class="toolbar">
+          <button class="success" onclick="manualOverride('GRANTED')">
+            อนุญาตครั้งเดียว
+          </button>
+
+          <button class="danger" onclick="manualOverride('DENIED')">
+            ปฏิเสธ
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:18px">
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>ทะเบียนรถในระบบ</h2>
+        <button class="ghost" onclick="loadVehicles()">รีเฟรช</button>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+          <tr>
+            <th>ทะเบียน</th>
+            <th>จังหวัด</th>
+            <th>เจ้าของ</th>
+            <th>ประเภท</th>
+            <th>รถ</th>
+            <th>สถานะ</th>
+            <th>หมดอายุ</th>
+            <th>จัดการ</th>
+          </tr>
+          </thead>
+
+          <tbody id="vehicleTable"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:18px">
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>ประวัติเข้า–ออกล่าสุด</h2>
+        <button class="ghost" onclick="loadLogs()">รีเฟรช</button>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+          <tr>
+            <th>เวลา</th>
+            <th>เข้า/ออก</th>
+            <th>ทะเบียน</th>
+            <th>ผล</th>
+            <th>เหตุผล</th>
+            <th>OCR</th>
+            <th>เจ้าของ</th>
+          </tr>
+          </thead>
+
+          <tbody id="logTable"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+let API_URL = localStorage.getItem('wu_api_url') || '';
+let API_KEY = localStorage.getItem('wu_api_key') || '';
+
+let stream = null;
+let lastConfidence = 0;
+let adminPIN = '';
+let vehicleCache = [];
+let bootstrap = {
+  gate:'MAIN-GATE-DEMO',
+  threshold:55,
+  autoOpen:true
+};
+
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.page).classList.add('active');
+  });
+});
+
+window.addEventListener('load',()=>{
+  document.getElementById('apiUrl').value = API_URL;
+  document.getElementById('apiKey').value = API_KEY;
+
+  if(API_URL && API_KEY){
+    loadBootstrap();
+  }
+});
+
+function saveConfig(){
+  API_URL = document.getElementById('apiUrl').value.trim();
+  API_KEY = document.getElementById('apiKey').value.trim();
+
+  localStorage.setItem('wu_api_url',API_URL);
+  localStorage.setItem('wu_api_key',API_KEY);
+
+  toast('บันทึกการตั้งค่าแล้ว');
+  loadBootstrap();
+}
+
+function jsonp(action, params={}){
+  return new Promise((resolve,reject)=>{
+
+    if(!API_URL){
+      reject(new Error('ยังไม่ได้ตั้งค่า Apps Script URL'));
+      return;
+    }
+
+    const callback = '__wu_cb_' + Date.now() + '_' + Math.floor(Math.random()*1000000);
+
+    const script = document.createElement('script');
+
+    const timer = setTimeout(()=>{
+      cleanup();
+      reject(new Error('API timeout'));
+    },20000);
+
+    window[callback] = data=>{
+      cleanup();
+
+      if(data && data.ok === false){
+        reject(new Error(data.error || 'API ERROR'));
+        return;
+      }
+
+      resolve(data);
+    };
+
+    function cleanup(){
+      clearTimeout(timer);
+      delete window[callback];
+      script.remove();
+    }
+
+    const q = new URLSearchParams({
+      action,
+      callback,
+      api_key:API_KEY,
+      ...params
+    });
+
+    script.src = API_URL + '?' + q.toString();
+    script.onerror = ()=>{
+      cleanup();
+      reject(new Error('เรียก API ไม่สำเร็จ'));
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+async function testApi(){
+  const url = document.getElementById('apiUrl').value.trim();
+  const key = document.getElementById('apiKey').value.trim();
+
+  if(!url || !key){
+    toast('กรอก URL และ API Key ก่อน');
+    return;
+  }
+
+  API_URL=url;
+  API_KEY=key;
+
+  try{
+    const r = await jsonp('bootstrap');
+
+    document.getElementById('apiStatus').innerHTML =
+      'เชื่อมต่อสำเร็จ — Gate: <b>'+escapeHtml(r.gate)+'</b>';
+
+    toast('เชื่อมต่อ API สำเร็จ');
+
+  }catch(err){
+    document.getElementById('apiStatus').textContent = err.message;
+    toast(err.message);
+  }
+}
+
+async function loadBootstrap(){
+  try{
+    bootstrap = await jsonp('bootstrap');
+
+    document.getElementById('gateName').textContent =
+      bootstrap.gate || '-';
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+/************************************************************
+ * CAMERA
+ ************************************************************/
+async function startCamera(){
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    toast('Browser นี้ไม่รองรับ Camera API');
+    return;
+  }
+
+  try{
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:'environment',
+        width:{ideal:1920},
+        height:{ideal:1080}
+      },
+      audio:false
+    });
+
+    document.getElementById('video').srcObject = stream;
+
+    toast('เปิดกล้องแล้ว');
+
+  }catch(err){
+
+    toast('เปิดกล้องไม่ได้: '+err.message);
+
+  }
+}
+
+function stopCamera(){
+
+  if(stream){
+    stream.getTracks().forEach(track=>track.stop());
+    stream=null;
+  }
+
+  toast('ปิดกล้องแล้ว');
+}
+
+async function captureAndRead(){
+
+  if(!stream){
+    toast('กรุณาเปิดกล้องก่อน');
+    return;
+  }
+
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('captureCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+
+  if(!vw || !vh){
+    toast('กล้องยังไม่พร้อม');
+    return;
+  }
+
+  const sx = Math.floor(vw*0.17);
+  const sy = Math.floor(vh*0.54);
+  const sw = Math.floor(vw*0.66);
+  const sh = Math.floor(vh*0.28);
+
+  canvas.width = sw;
+  canvas.height = sh;
+
+  ctx.drawImage(
+    video,
+    sx,sy,sw,sh,
+    0,0,sw,sh
+  );
+
+  document.getElementById('ocrStatus').textContent =
+    'กำลังอ่านทะเบียน...';
+
+  try{
+
+    const result = await Tesseract.recognize(
+      canvas,
+      'tha+eng',
+      {
+        logger:m=>{
+          if(m.status === 'recognizing text'){
+            document.getElementById('ocrStatus').textContent =
+              'OCR '+Math.round((m.progress||0)*100)+'%';
+          }
+        }
+      }
+    );
+
+    const raw = (result.data.text || '').trim();
+
+    lastConfidence =
+      Math.round(result.data.confidence || 0);
+
+    document.getElementById('ocrConfidence').textContent =
+      lastConfidence+'%';
+
+    const guess =
+      extractPlate(raw);
+
+    document.getElementById('plateInput').value =
+      guess;
+
+    document.getElementById('ocrStatus').textContent =
+      'อ่านข้อความ: '+raw.replace(/\n/g,' | ');
+
+    if(guess){
+      await checkNow(raw);
+    }else{
+      toast('ยังอ่านทะเบียนไม่ได้ ลองจัดตำแหน่งใหม่');
+    }
+
+  }catch(err){
+
+    document.getElementById('ocrStatus').textContent =
+      err.message;
+
+    toast('OCR ล้มเหลว');
+
+  }
+}
+
+function extractPlate(text){
+
+  let t = String(text||'')
+    .toUpperCase()
+    .replace(/THAILAND|ประเทศไทย/g,' ')
+    .replace(/[^\u0E00-\u0E7FA-Z0-9]/g,'');
+
+  if(t.length > 12){
+    t=t.slice(0,12);
+  }
+
+  return t;
+}
+
+/************************************************************
+ * ACCESS
+ ************************************************************/
+async function checkNow(rawOverride=''){
+
+  const plate =
+    document.getElementById('plateInput').value.trim();
+
+  if(!plate){
+    toast('กรอกหรืออ่านทะเบียนก่อน');
+    return;
+  }
+
+  try{
+
+    const r = await jsonp('checkAccess',{
+      plate_no:plate,
+      province:document.getElementById('provinceInput').value.trim(),
+      confidence:lastConfidence || 100,
+      direction:document.getElementById('direction').value,
+      gate:bootstrap.gate || '',
+      ocr_raw:rawOverride || plate
+    });
+
+    showAccess(r);
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+function showAccess(r){
+
+  const granted =
+    r.result === 'GRANTED';
+
+  const result =
+    document.getElementById('accessResult');
+
+  result.className =
+    'result '+(granted?'granted':'denied');
+
+  result.innerHTML =
+    '<span class="badge '+(granted?'green':'red')+'">'+
+    (granted?'อนุญาต':'ปฏิเสธ')+
+    '</span>'+
+    '<div class="plate">'+escapeHtml(r.plate_no || '—')+'</div>'+
+    '<div><b>'+escapeHtml(r.reason || '')+'</b></div>';
+
+  const gate =
+    document.getElementById('gateLight');
+
+  gate.className =
+    'gate '+(granted?'open':'closed');
+
+  gate.textContent =
+    granted?'เปิด':'ปิด';
+
+  const v = r.vehicle;
+
+  document.getElementById('vehicleInfo').innerHTML =
+    v
+      ?
+      '<b>'+escapeHtml(v.owner_name || '')+'</b><br>'+
+      'ประเภท: '+escapeHtml(v.owner_type || '')+'<br>'+
+      'รถ: '+escapeHtml(
+        [v.brand,v.model,v.color].filter(Boolean).join(' ')
+      )+'<br>'+
+      'สถานะ: '+escapeHtml(v.status || '')
+      :
+      'ไม่พบข้อมูลทะเบียนรถในระบบ';
+
+  if(granted){
+    setTimeout(()=>{
+      gate.className='gate closed';
+      gate.textContent='ปิด';
+    },3500);
+  }
+}
+
+/************************************************************
+ * ADMIN
+ ************************************************************/
+async function adminLogin(){
+
+  const pin =
+    document.getElementById('adminPin').value.trim();
+
+  try{
+
+    const r =
+      await jsonp('verifyAdmin',{pin});
+
+    if(!r.ok){
+      toast('PIN ไม่ถูกต้อง');
+      return;
+    }
+
+    adminPIN=pin;
+
+    document.getElementById('adminLogin').classList.add('hidden');
+    document.getElementById('adminArea').classList.remove('hidden');
+
+    await loadVehicles();
+    await loadLogs();
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+function value(id){
+  return document.getElementById(id).value;
+}
+
+async function saveVehicle(){
+
+  if(!adminPIN){
+    toast('กรุณา Login Admin');
+    return;
+  }
+
+  try{
+
+    await jsonp('saveVehicle',{
+      pin:adminPIN,
+      vehicle_id:value('vehicleId'),
+      plate_no:value('fPlate'),
+      province:value('fProvince'),
+      owner_name:value('fOwner'),
+      owner_type:value('fType'),
+      brand:value('fBrand'),
+      model:value('fModel'),
+      color:value('fColor'),
+      phone:value('fPhone'),
+      start_date:value('fStart'),
+      expire_date:value('fExpire'),
+      status:value('fStatus'),
+      note:value('fNote')
+    });
+
+    toast('บันทึกทะเบียนแล้ว');
+
+    clearVehicleForm();
+    await loadVehicles();
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+function clearVehicleForm(){
+
+  [
+    'vehicleId','fPlate','fProvince','fOwner',
+    'fBrand','fModel','fColor','fPhone',
+    'fStart','fExpire','fNote'
+  ].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+
+  document.getElementById('fType').value='STAFF';
+  document.getElementById('fStatus').value='ACTIVE';
+}
+
+async function loadVehicles(){
+
+  try{
+
+    const r = await jsonp('listVehicles',{
+      pin:adminPIN
+    });
+
+    vehicleCache =
+      r.vehicles || [];
+
+    document.getElementById('vehicleTable').innerHTML =
+      vehicleCache.map((v,i)=>`
+        <tr>
+          <td><b>${escapeHtml(v.plate_no)}</b></td>
+          <td>${escapeHtml(v.province)}</td>
+          <td>${escapeHtml(v.owner_name)}</td>
+          <td>${escapeHtml(v.owner_type)}</td>
+          <td>${escapeHtml([v.brand,v.model,v.color].filter(Boolean).join(' '))}</td>
+          <td>${escapeHtml(v.status)}</td>
+          <td>${escapeHtml(v.expire_date || '')}</td>
+          <td>
+            <button class="ghost" onclick="editVehicle(${i})">แก้ไข</button>
+            <button class="danger" onclick="deleteVehicle('${escapeJs(v.vehicle_id)}')">ลบ</button>
+          </td>
+        </tr>
+      `).join('');
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+function editVehicle(i){
+
+  const v =
+    vehicleCache[i];
+
+  document.getElementById('vehicleId').value=v.vehicle_id||'';
+  document.getElementById('fPlate').value=v.plate_no||'';
+  document.getElementById('fProvince').value=v.province||'';
+  document.getElementById('fOwner').value=v.owner_name||'';
+  document.getElementById('fType').value=v.owner_type||'STAFF';
+  document.getElementById('fBrand').value=v.brand||'';
+  document.getElementById('fModel').value=v.model||'';
+  document.getElementById('fColor').value=v.color||'';
+  document.getElementById('fPhone').value=v.phone||'';
+  document.getElementById('fStatus').value=v.status||'ACTIVE';
+  document.getElementById('fNote').value=v.note||'';
+
+  document.getElementById('fStart').value =
+    dateOnly(v.start_date);
+
+  document.getElementById('fExpire').value =
+    dateOnly(v.expire_date);
+
+  window.scrollTo({
+    top:70,
+    behavior:'smooth'
+  });
+}
+
+async function deleteVehicle(vehicleId){
+
+  if(!confirm('ยืนยันการลบทะเบียนนี้?')){
+    return;
+  }
+
+  try{
+
+    await jsonp('deleteVehicle',{
+      pin:adminPIN,
+      vehicle_id:vehicleId
+    });
+
+    toast('ลบทะเบียนแล้ว');
+
+    await loadVehicles();
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+async function loadLogs(){
+
+  try{
+
+    const r = await jsonp('recentLogs',{
+      pin:adminPIN,
+      limit:50
+    });
+
+    document.getElementById('logTable').innerHTML =
+      (r.logs || []).map(log=>`
+        <tr>
+          <td>${escapeHtml(log.timestamp || '')}</td>
+          <td>${escapeHtml(log.direction || '')}</td>
+          <td><b>${escapeHtml(log.plate_no || '')}</b></td>
+          <td>${resultBadge(log.result)}</td>
+          <td>${escapeHtml(log.reason || '')}</td>
+          <td>${escapeHtml(log.confidence || 0)}%</td>
+          <td>${escapeHtml(log.owner_name || '')}</td>
+        </tr>
+      `).join('');
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+async function manualOverride(result){
+
+  try{
+
+    const r = await jsonp('manualOverride',{
+      pin:adminPIN,
+      plate_no:value('manualPlate'),
+      province:value('manualProvince'),
+      direction:value('direction'),
+      result:result,
+      gate:bootstrap.gate || ''
+    });
+
+    toast(
+      result === 'GRANTED'
+        ?
+        'อนุญาตผ่านแล้ว'
+        :
+        'ปฏิเสธแล้ว'
+    );
+
+    showAccess(r);
+
+    await loadLogs();
+
+  }catch(err){
+    toast(err.message);
+  }
+}
+
+/************************************************************
+ * UTILS
+ ************************************************************/
+function resultBadge(result){
+
+  return '<span class="badge '+(
+    result === 'GRANTED'
+      ?
+      'green'
+      :
+      'red'
+  )+'">'+escapeHtml(result || '')+'</span>';
+}
+
+function dateOnly(v){
+
+  const m =
+    String(v||'').match(/\d{4}-\d{2}-\d{2}/);
+
+  return m ? m[0] : '';
+}
+
+function escapeHtml(v){
+
+  return String(v ?? '')
+    .replace(/[&<>"']/g,c=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[c]));
+}
+
+function escapeJs(v){
+
+  return String(v ?? '')
+    .replace(/\\/g,'\\\\')
+    .replace(/'/g,"\\'");
+}
+
+function toast(message){
+
+  const el =
+    document.getElementById('toast');
+
+  el.textContent =
+    message;
+
+  el.style.display =
+    'block';
+
+  setTimeout(()=>{
+    el.style.display='none';
+  },3200);
+}
+</script>
+
+</body>
+</html>
