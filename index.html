@@ -1,1296 +1,3601 @@
 <!doctype html>
 <html lang="th">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>WU Smart Gate Auto Demo</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<meta charset="utf-8">
 
-  <style>
-    :root{
-      --purple:#5b2aa8;
-      --purple2:#311366;
-      --orange:#f58220;
-      --green:#148354;
-      --red:#c63b3b;
-      --gold:#f2c94c;
-      --bg:#f5f6fa;
-      --card:#fff;
-      --line:#e8e9ef;
-      --text:#202331;
-      --muted:#747b8d;
-    }
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
-    *{box-sizing:border-box}
+<title>
+WU Smart Gate
+</title>
 
-    body{
-      margin:0;
-      font-family:Arial,"Noto Sans Thai",sans-serif;
-      background:var(--bg);
-      color:var(--text)
-    }
+<script
+src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
+</script>
 
-    header{
-      background:linear-gradient(135deg,var(--purple2),var(--purple));
-      color:#fff;
-      padding:16px 22px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px
-    }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px
-    }
+<style>
 
-    .logo{
-      width:46px;
-      height:46px;
-      border-radius:12px;
-      background:#fff;
-      color:var(--purple);
-      display:grid;
-      place-items:center;
-      font-weight:900
-    }
+:root{
 
-    h1{margin:0;font-size:20px}
-    header small{opacity:.78}
+  --purple:#5b2aa8;
+  --purple-dark:#32136b;
 
-    nav{display:flex;gap:8px}
-    nav button{
-      background:#ffffff1c;
-      color:#fff
-    }
-    nav button.active{
-      background:#fff;
-      color:var(--purple)
-    }
+  --orange:#f58220;
 
-    button{
-      border:0;
-      border-radius:10px;
-      padding:11px 15px;
-      font-weight:800;
-      cursor:pointer
-    }
+  --green:#138354;
 
-    .primary{background:var(--purple);color:#fff}
-    .success{background:var(--green);color:#fff}
-    .danger{background:var(--red);color:#fff}
-    .ghost{background:#eef0f6;color:#303544}
-    .orange{background:var(--orange);color:#fff}
+  --red:#c93c3c;
 
-    main{
-      max-width:1400px;
-      margin:20px auto;
-      padding:0 16px
-    }
+  --gold:#f4c542;
 
-    .page{display:none}
-    .page.active{display:block}
+  --bg:#f5f6fa;
 
-    .grid{
-      display:grid;
-      grid-template-columns:1.35fr .65fr;
-      gap:18px
-    }
+  --card:#ffffff;
 
-    .card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      box-shadow:0 8px 25px #17203a0b
-    }
+  --text:#202331;
 
-    .card h2{
-      margin:0 0 14px;
-      font-size:18px
-    }
+  --muted:#747b8d;
 
-    .camera{
-      position:relative;
-      background:#111;
-      border-radius:16px;
-      overflow:hidden;
-      aspect-ratio:16/9
-    }
+  --line:#e7e9f0;
 
-    video{
-      width:100%;
-      height:100%;
-      object-fit:cover
-    }
+}
 
-    .roi{
-      position:absolute;
-      left:20%;
-      right:20%;
-      bottom:21%;
-      height:21%;
-      border:3px solid var(--gold);
-      border-radius:12px;
-      box-shadow:0 0 0 999px #0007
-    }
 
-    .roi-label{
-      position:absolute;
-      left:20%;
-      bottom:42%;
-      background:var(--gold);
-      color:#1f2430;
-      padding:6px 10px;
-      border-radius:8px 8px 0 0;
-      font-weight:900
-    }
+*{
+  box-sizing:border-box;
+}
 
-    .scan-dot{
-      position:absolute;
-      right:18px;
-      top:18px;
-      display:flex;
-      gap:8px;
-      align-items:center;
-      background:#0009;
-      color:#fff;
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px
-    }
 
-    .dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background:#999
-    }
+body{
 
-    .dot.on{
-      background:#35d07f;
-      box-shadow:0 0 10px #35d07f
-    }
+  margin:0;
 
-    .toolbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:9px;
-      margin-top:12px
-    }
+  font-family:
+  Arial,
+  "Noto Sans Thai",
+  sans-serif;
 
-    input,select,textarea{
-      width:100%;
-      padding:11px 12px;
-      border:1px solid var(--line);
-      border-radius:10px;
-      font-size:15px;
-      background:#fff
-    }
+  background:
+  var(--bg);
 
-    label{
-      display:block;
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:6px
-    }
+  color:
+  var(--text);
 
-    .result{
-      margin-top:14px;
-      border-radius:16px;
-      padding:18px;
-      background:#f0f2f7
-    }
+}
 
-    .result.granted{
-      background:#e8f6ef;
-      border:1px solid #b9dfca
-    }
 
-    .result.denied{
-      background:#fff0f0;
-      border:1px solid #efc3c3
-    }
+header{
 
-    .result.waiting{
-      background:#fff8e7;
-      border:1px solid #f0d790
-    }
+  padding:
+  16px 22px;
 
-    .plate{
-      font-size:44px;
-      font-weight:900;
-      margin:8px 0;
-      letter-spacing:1px
-    }
+  background:
+  linear-gradient(
+    135deg,
+    var(--purple-dark),
+    var(--purple)
+  );
 
-    .badge{
-      display:inline-block;
-      border-radius:999px;
-      padding:6px 10px;
-      background:#eceef4;
-      font-size:12px;
-      font-weight:900
-    }
+  color:white;
 
-    .badge.green{background:#dff3e8;color:#0d6941}
-    .badge.red{background:#fde2e2;color:#982525}
-    .badge.orange{background:#fff0d8;color:#9a5d00}
+  display:flex;
 
-    .gate{
-      height:132px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      background:#2d313b;
-      color:#fff;
-      font-size:34px;
-      font-weight:900;
-      transition:.2s
-    }
+  align-items:center;
 
-    .gate.open{background:var(--green)}
-    .gate.closed{background:var(--red)}
+  justify-content:
+  space-between;
 
-    .stats{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px
-    }
+  gap:20px;
 
-    .stat{
-      background:#f7f8fb;
-      border-radius:12px;
-      padding:12px
-    }
+}
 
-    .stat small{
-      color:var(--muted)
-    }
 
-    .stat b{
-      display:block;
-      margin-top:3px;
-      font-size:18px
-    }
+.brand{
 
-    .mini{
-      font-size:12px;
-      color:var(--muted)
-    }
+  display:flex;
 
-    .config{
-      max-width:760px;
-      margin:30px auto
-    }
+  align-items:center;
 
-    .notice{
-      background:#fff6df;
-      border:1px solid #f5dc9b;
-      padding:12px;
-      border-radius:10px;
-      margin-bottom:14px
-    }
+  gap:12px;
 
-    .history{
-      margin-top:18px
-    }
+}
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:13px
-    }
 
-    th,td{
-      padding:10px;
-      border-bottom:1px solid var(--line);
-      text-align:left
-    }
+.logo{
 
-    th{background:#fafbfc}
+  width:48px;
 
-    #toast{
-      display:none;
-      position:fixed;
-      right:18px;
-      bottom:18px;
-      z-index:999;
-      background:#20232b;
-      color:#fff;
-      padding:12px 16px;
-      border-radius:10px
-    }
+  height:48px;
 
-    .hidden{display:none!important}
+  border-radius:13px;
 
-    @media(max-width:900px){
-      .grid{grid-template-columns:1fr}
-      header{align-items:flex-start;flex-direction:column}
-      nav{width:100%}
-      nav button{flex:1}
-      .plate{font-size:34px}
-    }
-  </style>
+  background:white;
+
+  color:
+  var(--purple);
+
+  display:grid;
+
+  place-items:center;
+
+  font-weight:900;
+
+}
+
+
+h1{
+
+  margin:0;
+
+  font-size:21px;
+
+}
+
+
+header small{
+
+  opacity:.78;
+
+}
+
+
+nav{
+
+  display:flex;
+
+  gap:8px;
+
+}
+
+
+button{
+
+  border:0;
+
+  border-radius:10px;
+
+  padding:
+  11px 15px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+}
+
+
+nav button{
+
+  background:
+  rgba(
+    255,
+    255,
+    255,
+    .12
+  );
+
+  color:white;
+
+}
+
+
+nav button.active{
+
+  background:white;
+
+  color:
+  var(--purple);
+
+}
+
+
+.primary{
+
+  background:
+  var(--purple);
+
+  color:white;
+
+}
+
+
+.success{
+
+  background:
+  var(--green);
+
+  color:white;
+
+}
+
+
+.danger{
+
+  background:
+  var(--red);
+
+  color:white;
+
+}
+
+
+.ghost{
+
+  background:
+  #eef0f6;
+
+  color:
+  #303544;
+
+}
+
+
+main{
+
+  max-width:
+  1400px;
+
+  margin:
+  20px auto;
+
+  padding:
+  0 16px;
+
+}
+
+
+.page{
+
+  display:none;
+
+}
+
+
+.page.active{
+
+  display:block;
+
+}
+
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:
+  1.35fr .65fr;
+
+  gap:18px;
+
+}
+
+
+.card{
+
+  background:white;
+
+  border:
+  1px solid
+  var(--line);
+
+  border-radius:
+  18px;
+
+  padding:
+  18px;
+
+  box-shadow:
+  0 8px 28px
+  rgba(
+    25,
+    32,
+    55,
+    .05
+  );
+
+}
+
+
+.card h2{
+
+  margin:
+  0 0 14px;
+
+  font-size:
+  18px;
+
+}
+
+
+.camera{
+
+  position:
+  relative;
+
+  background:
+  #111;
+
+  border-radius:
+  16px;
+
+  overflow:
+  hidden;
+
+  aspect-ratio:
+  16 / 9;
+
+}
+
+
+video{
+
+  width:
+  100%;
+
+  height:
+  100%;
+
+  object-fit:
+  cover;
+
+}
+
+
+.roi{
+
+  position:
+  absolute;
+
+  left:
+  18%;
+
+  right:
+  18%;
+
+  bottom:
+  19%;
+
+  height:
+  24%;
+
+  border:
+  3px solid
+  var(--gold);
+
+  border-radius:
+  12px;
+
+  box-shadow:
+  0 0 0 1000px
+  rgba(
+    0,
+    0,
+    0,
+    .50
+  );
+
+}
+
+
+.roi-label{
+
+  position:
+  absolute;
+
+  left:
+  18%;
+
+  bottom:
+  43%;
+
+  padding:
+  6px 10px;
+
+  background:
+  var(--gold);
+
+  font-weight:
+  900;
+
+  border-radius:
+  8px 8px 0 0;
+
+}
+
+
+.scanning{
+
+  position:
+  absolute;
+
+  right:
+  15px;
+
+  top:
+  15px;
+
+  padding:
+  8px 11px;
+
+  background:
+  rgba(
+    0,
+    0,
+    0,
+    .75
+  );
+
+  color:white;
+
+  border-radius:
+  999px;
+
+  display:flex;
+
+  gap:8px;
+
+  align-items:
+  center;
+
+  font-size:
+  12px;
+
+}
+
+
+.dot{
+
+  width:
+  10px;
+
+  height:
+  10px;
+
+  border-radius:
+  50%;
+
+  background:
+  #999;
+
+}
+
+
+.dot.active{
+
+  background:
+  #36d981;
+
+  box-shadow:
+  0 0 10px
+  #36d981;
+
+}
+
+
+.toolbar{
+
+  margin-top:
+  12px;
+
+  display:flex;
+
+  flex-wrap:
+  wrap;
+
+  gap:8px;
+
+}
+
+
+select,
+input,
+textarea{
+
+  width:
+  100%;
+
+  padding:
+  11px 12px;
+
+  border:
+  1px solid
+  var(--line);
+
+  border-radius:
+  10px;
+
+  background:white;
+
+  font-size:
+  15px;
+
+}
+
+
+.result{
+
+  margin-top:
+  14px;
+
+  padding:
+  18px;
+
+  border-radius:
+  16px;
+
+  background:
+  #f1f2f7;
+
+}
+
+
+.result.granted{
+
+  background:
+  #e6f7ee;
+
+  border:
+  1px solid
+  #b1e0c6;
+
+}
+
+
+.result.denied{
+
+  background:
+  #fff0f0;
+
+  border:
+  1px solid
+  #efbcbc;
+
+}
+
+
+.result.waiting{
+
+  background:
+  #fff8e5;
+
+  border:
+  1px solid
+  #edd58a;
+
+}
+
+
+.badge{
+
+  display:
+  inline-block;
+
+  padding:
+  6px 10px;
+
+  border-radius:
+  999px;
+
+  font-size:
+  12px;
+
+  font-weight:
+  900;
+
+  background:
+  #eceef3;
+
+}
+
+
+.badge.green{
+
+  background:
+  #dbf3e7;
+
+  color:
+  #0b6840;
+
+}
+
+
+.badge.red{
+
+  background:
+  #fce0e0;
+
+  color:
+  #9d2525;
+
+}
+
+
+.badge.orange{
+
+  background:
+  #fff0cf;
+
+  color:
+  #9a5b00;
+
+}
+
+
+.plate{
+
+  margin:
+  8px 0;
+
+  font-size:
+  46px;
+
+  font-weight:
+  900;
+
+}
+
+
+.gate{
+
+  height:
+  140px;
+
+  border-radius:
+  18px;
+
+  display:grid;
+
+  place-items:center;
+
+  background:
+  var(--red);
+
+  color:white;
+
+  font-size:
+  36px;
+
+  font-weight:
+  900;
+
+  transition:
+  .2s;
+
+}
+
+
+.gate.open{
+
+  background:
+  var(--green);
+
+}
+
+
+.stats{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    3,
+    1fr
+  );
+
+  gap:10px;
+
+  margin-top:
+  12px;
+
+}
+
+
+.stat{
+
+  padding:
+  12px;
+
+  border-radius:
+  12px;
+
+  background:
+  #f7f8fb;
+
+}
+
+
+.stat small{
+
+  color:
+  var(--muted);
+
+}
+
+
+.stat b{
+
+  display:block;
+
+  margin-top:
+  4px;
+
+}
+
+
+.mini{
+
+  font-size:
+  12px;
+
+  color:
+  var(--muted);
+
+}
+
+
+.form-grid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    2,
+    1fr
+  );
+
+  gap:12px;
+
+}
+
+
+label{
+
+  display:block;
+
+  margin-bottom:
+  6px;
+
+  color:
+  var(--muted);
+
+  font-size:
+  13px;
+
+}
+
+
+.full{
+
+  grid-column:
+  1 / -1;
+
+}
+
+
+.admin-login{
+
+  max-width:
+  430px;
+
+  margin:
+  60px auto;
+
+}
+
+
+.hidden{
+
+  display:
+  none !important;
+
+}
+
+
+.table-wrap{
+
+  overflow:auto;
+
+  border:
+  1px solid
+  var(--line);
+
+  border-radius:
+  12px;
+
+}
+
+
+table{
+
+  width:
+  100%;
+
+  border-collapse:
+  collapse;
+
+  font-size:
+  13px;
+
+}
+
+
+th,
+td{
+
+  padding:
+  10px;
+
+  text-align:
+  left;
+
+  border-bottom:
+  1px solid
+  var(--line);
+
+  white-space:
+  nowrap;
+
+}
+
+
+th{
+
+  background:
+  #fafbfc;
+
+}
+
+
+#toast{
+
+  display:none;
+
+  position:fixed;
+
+  right:
+  18px;
+
+  bottom:
+  18px;
+
+  z-index:
+  999;
+
+  background:
+  #22252d;
+
+  color:white;
+
+  padding:
+  12px 16px;
+
+  border-radius:
+  10px;
+
+}
+
+
+@media(
+  max-width:
+  900px
+){
+
+  .grid{
+
+    grid-template-columns:
+    1fr;
+
+  }
+
+
+  .form-grid{
+
+    grid-template-columns:
+    1fr;
+
+  }
+
+
+  header{
+
+    flex-direction:
+    column;
+
+    align-items:
+    flex-start;
+
+  }
+
+
+  nav{
+
+    width:
+    100%;
+
+  }
+
+
+  nav button{
+
+    flex:
+    1;
+
+  }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-<header>
-  <div class="brand">
-    <div class="logo">WU</div>
-    <div>
-      <h1>WU Smart Gate — Auto Demo</h1>
-      <small>Automatic Thai License Plate Access Prototype</small>
-    </div>
-  </div>
 
-  <nav>
-    <button class="active" data-page="gatePage">Auto Gate</button>
-    <button data-page="configPage">ตั้งค่า</button>
-  </nav>
+<header>
+
+<div class="brand">
+
+<div class="logo">
+WU
+</div>
+
+<div>
+
+<h1>
+WU Smart Gate
+</h1>
+
+<small>
+Automatic Vehicle Access Demo
+</small>
+
+</div>
+
+</div>
+
+
+<nav>
+
+<button
+class="active"
+data-page="gatePage"
+>
+Auto Gate
+</button>
+
+<button
+data-page="adminPage"
+>
+Admin
+</button>
+
+</nav>
+
 </header>
+
 
 <main>
 
-<section id="gatePage" class="page active">
-  <div class="grid">
 
-    <div class="card">
-      <h2>กล้องตรวจทะเบียนอัตโนมัติ</h2>
+<section
+id="gatePage"
+class="page active"
+>
 
-      <div class="camera">
-        <video id="video" autoplay muted playsinline></video>
-        <div class="roi-label">วางป้ายทะเบียนในกรอบ</div>
-        <div class="roi"></div>
 
-        <div class="scan-dot">
-          <span id="scanDot" class="dot"></span>
-          <span id="scanText">หยุดสแกน</span>
-        </div>
-      </div>
+<div class="grid">
 
-      <canvas id="captureCanvas" class="hidden"></canvas>
 
-      <div class="toolbar">
-        <button class="primary" onclick="startAutoGate()">เริ่มระบบอัตโนมัติ</button>
-        <button class="danger" onclick="stopAutoGate()">หยุดระบบ</button>
+<div class="card">
 
-        <select id="direction" style="width:auto">
-          <option value="IN">รถเข้า</option>
-          <option value="OUT">รถออก</option>
-        </select>
-      </div>
+<h2>
+กล้องตรวจทะเบียนอัตโนมัติ
+</h2>
 
-      <div id="ocrStatus" class="mini" style="margin-top:10px">
-        ระบบยังไม่เริ่มทำงาน
-      </div>
 
-      <div id="accessResult" class="result waiting">
-        <span class="badge orange">รอรถ</span>
-        <div class="plate">—</div>
-        <div>เมื่อเริ่มระบบ กล้องจะตรวจทะเบียนอัตโนมัติ</div>
-      </div>
+<div class="camera">
 
-      <div class="history">
-        <h2>เหตุการณ์ล่าสุด</h2>
-        <table>
-          <thead>
-          <tr>
-            <th>เวลา</th>
-            <th>ทะเบียน</th>
-            <th>ผล</th>
-            <th>เหตุผล</th>
-          </tr>
-          </thead>
-          <tbody id="eventTable"></tbody>
-        </table>
-      </div>
-    </div>
+<video
+id="video"
+autoplay
+muted
+playsinline
+>
+</video>
 
-    <div>
-      <div class="card">
-        <h2>สถานะประตูจำลอง</h2>
 
-        <div id="gateLight" class="gate closed">
-          ปิด
-        </div>
+<div class="roi-label">
+ทะเบียนรถ
+</div>
 
-        <div class="stats">
-          <div class="stat">
-            <small>Gate</small>
-            <b id="gateName">-</b>
-          </div>
 
-          <div class="stat">
-            <small>OCR</small>
-            <b id="ocrConfidence">0%</b>
-          </div>
+<div class="roi">
+</div>
 
-          <div class="stat">
-            <small>ยืนยัน</small>
-            <b id="confirmState">0/2</b>
-          </div>
-        </div>
-      </div>
 
-      <div class="card" style="margin-top:18px">
-        <h2>ข้อมูลรถล่าสุด</h2>
-        <div id="vehicleInfo" class="mini">
-          ยังไม่มีข้อมูล
-        </div>
-      </div>
+<div class="scanning">
 
-      <div class="card" style="margin-top:18px">
-        <h2>สถานะระบบ</h2>
-        <div class="mini">
-          Scan interval: 2.2 วินาที<br>
-          Confirm required: 2 ครั้งติดกัน<br>
-          Cooldown: 10 วินาที<br>
-          Gate open simulation: 3.5 วินาที
-        </div>
-      </div>
-    </div>
+<span
+id="scanDot"
+class="dot"
+>
+</span>
 
-  </div>
+<span
+id="scanText"
+>
+หยุด
+</span>
+
+</div>
+
+
+</div>
+
+
+<canvas
+id="canvas"
+class="hidden"
+>
+</canvas>
+
+
+<div class="toolbar">
+
+<button
+class="primary"
+onclick="startGate()"
+>
+เริ่มระบบอัตโนมัติ
+</button>
+
+
+<button
+class="danger"
+onclick="stopGate()"
+>
+หยุด
+</button>
+
+
+<select
+id="direction"
+style="width:auto"
+>
+
+<option value="IN">
+รถเข้า
+</option>
+
+<option value="OUT">
+รถออก
+</option>
+
+</select>
+
+</div>
+
+
+<div
+id="ocrStatus"
+class="mini"
+style="margin-top:10px"
+>
+
+ระบบยังไม่เริ่ม
+
+</div>
+
+
+<div
+id="resultBox"
+class="result waiting"
+>
+
+<span
+class="badge orange"
+>
+รอรถ
+</span>
+
+<div class="plate">
+—
+</div>
+
+<div>
+ระบบจะตรวจทะเบียนอัตโนมัติ
+</div>
+
+</div>
+
+
+</div>
+
+
+<div>
+
+
+<div class="card">
+
+<h2>
+สถานะประตู
+</h2>
+
+
+<div
+id="gate"
+class="gate"
+>
+
+ปิด
+
+</div>
+
+
+<div class="stats">
+
+
+<div class="stat">
+
+<small>
+Gate
+</small>
+
+<b id="gateName">
+-
+</b>
+
+</div>
+
+
+<div class="stat">
+
+<small>
+OCR
+</small>
+
+<b id="confidence">
+0%
+</b>
+
+</div>
+
+
+<div class="stat">
+
+<small>
+ยืนยัน
+</small>
+
+<b id="confirmation">
+0/2
+</b>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<div
+class="card"
+style="margin-top:18px"
+>
+
+<h2>
+ข้อมูลรถ
+</h2>
+
+<div
+id="vehicleInfo"
+class="mini"
+>
+
+ยังไม่มีข้อมูล
+
+</div>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
 </section>
 
-<section id="configPage" class="page">
-  <div class="card config">
 
-    <h2>ตั้งค่าการเชื่อมต่อ</h2>
+<section
+id="adminPage"
+class="page"
+>
 
-    <div class="notice">
-      วาง Apps Script Web App URL และ API Key จากระบบ Backend
-      ระบบจะบันทึกไว้ใน Browser เครื่องนี้
-    </div>
 
-    <label>Apps Script Web App URL</label>
-    <input id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec">
+<div
+id="adminLogin"
+class="card admin-login"
+>
 
-    <label style="margin-top:12px">API Key</label>
-    <input id="apiKey" placeholder="API Key จาก SETTINGS">
+<h2>
+Admin
+</h2>
 
-    <div class="toolbar">
-      <button class="primary" onclick="saveConfig()">บันทึก</button>
-      <button class="ghost" onclick="testApi()">ทดสอบการเชื่อมต่อ</button>
-    </div>
 
-    <div id="apiStatus" class="mini" style="margin-top:12px"></div>
+<label>
+PIN
+</label>
 
-  </div>
+
+<input
+id="adminPin"
+type="password"
+placeholder="PIN"
+>
+
+
+<button
+class="primary"
+style="width:100%;margin-top:12px"
+onclick="loginAdmin()"
+>
+
+เข้าสู่ระบบ
+
+</button>
+
+</div>
+
+
+<div
+id="adminArea"
+class="hidden"
+>
+
+
+<div class="card">
+
+<h2>
+ลงทะเบียนรถ
+</h2>
+
+
+<input
+id="vehicleId"
+type="hidden"
+>
+
+
+<div class="form-grid">
+
+
+<div>
+
+<label>
+ทะเบียนรถ *
+</label>
+
+<input
+id="fPlate"
+placeholder="กข1234"
+>
+
+</div>
+
+
+<div>
+
+<label>
+จังหวัด *
+</label>
+
+<input
+id="fProvince"
+placeholder="นครศรีธรรมราช"
+>
+
+</div>
+
+
+<div>
+
+<label>
+ชื่อเจ้าของรถ *
+</label>
+
+<input
+id="fOwner"
+>
+
+</div>
+
+
+<div>
+
+<label>
+ประเภท *
+</label>
+
+<select
+id="fType"
+>
+
+<option value="STAFF">
+บุคลากร
+</option>
+
+<option value="STUDENT">
+นักศึกษา
+</option>
+
+<option value="VISITOR">
+บุคคลทั่วไป
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+ยี่ห้อ
+</label>
+
+<input id="fBrand">
+
+</div>
+
+
+<div>
+
+<label>
+รุ่น
+</label>
+
+<input id="fModel">
+
+</div>
+
+
+<div>
+
+<label>
+สี
+</label>
+
+<input id="fColor">
+
+</div>
+
+
+<div>
+
+<label>
+โทรศัพท์
+</label>
+
+<input id="fPhone">
+
+</div>
+
+
+<div>
+
+<label>
+เริ่มใช้งาน
+</label>
+
+<input
+id="fStart"
+type="date"
+>
+
+</div>
+
+
+<div>
+
+<label>
+หมดอายุ
+</label>
+
+<input
+id="fExpire"
+type="date"
+>
+
+</div>
+
+
+<div>
+
+<label>
+สถานะ
+</label>
+
+<select
+id="fStatus"
+>
+
+<option value="ACTIVE">
+ACTIVE
+</option>
+
+<option value="INACTIVE">
+INACTIVE
+</option>
+
+<option value="BLACKLIST">
+BLACKLIST
+</option>
+
+</select>
+
+</div>
+
+
+<div class="full">
+
+<label>
+หมายเหตุ
+</label>
+
+<textarea
+id="fNote"
+>
+</textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="toolbar">
+
+<button
+class="primary"
+onclick="saveVehicle()"
+>
+บันทึก
+</button>
+
+<button
+class="ghost"
+onclick="clearForm()"
+>
+ล้าง
+</button>
+
+</div>
+
+
+</div>
+
+
+<div
+class="card"
+style="margin-top:18px"
+>
+
+<div
+style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+"
+>
+
+<h2>
+ทะเบียนรถในระบบ
+</h2>
+
+<button
+class="ghost"
+onclick="loadVehicles()"
+>
+รีเฟรช
+</button>
+
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+ทะเบียน
+</th>
+
+<th>
+จังหวัด
+</th>
+
+<th>
+เจ้าของ
+</th>
+
+<th>
+ประเภท
+</th>
+
+<th>
+รถ
+</th>
+
+<th>
+สถานะ
+</th>
+
+<th>
+จัดการ
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+id="vehicleTable"
+>
+</tbody>
+
+
+</table>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
 </section>
+
 
 </main>
 
-<div id="toast"></div>
+
+<div id="toast">
+</div>
+
 
 <script>
-/* =========================================================
-   CONFIG
-========================================================= */
 
-let API_URL = localStorage.getItem('wu_api_url') || '';
-let API_KEY = localStorage.getItem('wu_api_key') || '';
+/************************************************************
+ * BACKEND URL
+ ************************************************************/
 
-let bootstrap = {
-  gate:'MAIN-GATE-DEMO',
-  threshold:55,
-  autoOpen:true
-};
+const API_URL =
+'https://script.google.com/macros/s/AKfycbxBiH-oHLXiT9GVHa4WRPHKbObbYT3A2NpUNcqFwh7eNYyNPvP_BCZTFqKOZ3iFIPQ5/exec';
 
-const SCAN_INTERVAL_MS = 2200;
-const REQUIRED_CONFIRMATIONS = 2;
-const COOLDOWN_MS = 10000;
-const GATE_OPEN_MS = 3500;
 
-let stream = null;
-let autoRunning = false;
-let scanTimer = null;
-let busy = false;
+/************************************************************
+ * SETTINGS
+ ************************************************************/
 
-let lastCandidate = '';
-let confirmCount = 0;
-let lastConfidence = 0;
+const SCAN_INTERVAL =
+2500;
 
-const cooldownMap = {};
-const eventRows = [];
+const CONFIRM_REQUIRED =
+2;
 
-/* =========================================================
-   NAV
-========================================================= */
+const COOLDOWN =
+10000;
 
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+const GATE_OPEN_TIME =
+3500;
 
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.page).classList.add('active');
-  });
-});
 
-window.addEventListener('load',()=>{
-  document.getElementById('apiUrl').value = API_URL;
-  document.getElementById('apiKey').value = API_KEY;
+let stream =
+null;
 
-  if(API_URL && API_KEY){
-    loadBootstrap();
+let running =
+false;
+
+let scanning =
+false;
+
+let timer =
+null;
+
+
+let previousPlate =
+'';
+
+let confirmationCount =
+0;
+
+
+let cooldown =
+{};
+
+
+let adminPIN =
+'';
+
+
+let vehicles =
+[];
+
+
+/************************************************************
+ * NAVIGATION
+ ************************************************************/
+
+document
+.querySelectorAll(
+  'nav button'
+)
+.forEach(
+  button => {
+
+    button
+    .addEventListener(
+      'click',
+      () => {
+
+        document
+        .querySelectorAll(
+          'nav button'
+        )
+        .forEach(
+          x =>
+          x.classList.remove(
+            'active'
+          )
+        );
+
+
+        document
+        .querySelectorAll(
+          '.page'
+        )
+        .forEach(
+          x =>
+          x.classList.remove(
+            'active'
+          )
+        );
+
+
+        button
+        .classList
+        .add(
+          'active'
+        );
+
+
+        document
+        .getElementById(
+          button.dataset.page
+        )
+        .classList
+        .add(
+          'active'
+        );
+
+      }
+    );
+
   }
-});
+);
 
-/* =========================================================
-   API / JSONP
-========================================================= */
 
-function saveConfig(){
+/************************************************************
+ * STARTUP
+ ************************************************************/
 
-  API_URL = document.getElementById('apiUrl').value.trim();
-  API_KEY = document.getElementById('apiKey').value.trim();
+window
+.addEventListener(
+  'load',
+  async () => {
 
-  localStorage.setItem('wu_api_url',API_URL);
-  localStorage.setItem('wu_api_key',API_KEY);
+    try {
 
-  toast('บันทึกการตั้งค่าแล้ว');
-  loadBootstrap();
-}
+      const data =
+        await api(
+          'bootstrap'
+        );
 
-function jsonp(action, params={}){
 
-  return new Promise((resolve,reject)=>{
+      document
+      .getElementById(
+        'gateName'
+      )
+      .textContent =
+        data.gate ||
+        '-';
 
-    if(!API_URL){
-      reject(new Error('ยังไม่ได้ตั้งค่า Apps Script URL'));
-      return;
+
+    } catch (error) {
+
+      toast(
+        'เชื่อม Backend ไม่สำเร็จ: ' +
+        error.message
+      );
+
     }
 
-    const callback =
-      '__wu_cb_' +
-      Date.now() +
-      '_' +
-      Math.floor(Math.random()*1000000);
+  }
+);
 
-    const script =
-      document.createElement('script');
 
-    const timer =
-      setTimeout(()=>{
-        cleanup();
-        reject(new Error('API timeout'));
-      },20000);
+/************************************************************
+ * JSONP
+ ************************************************************/
 
-    window[callback] = data=>{
+function api(
+  action,
+  params = {}
+){
 
-      cleanup();
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
 
-      if(data && data.ok === false){
-        reject(new Error(data.error || 'API ERROR'));
-        return;
+      const callback =
+        '__wu_' +
+        Date.now() +
+        '_' +
+        Math.floor(
+          Math.random() *
+          100000
+        );
+
+
+      const script =
+        document
+        .createElement(
+          'script'
+        );
+
+
+      const timeout =
+        setTimeout(
+          () => {
+
+            cleanup();
+
+            reject(
+              new Error(
+                'API TIMEOUT'
+              )
+            );
+
+          },
+          20000
+        );
+
+
+      window[
+        callback
+      ] =
+        data => {
+
+          cleanup();
+
+
+          if (
+            data &&
+            data.ok ===
+            false
+          ) {
+
+            reject(
+              new Error(
+                data.error ||
+                'API ERROR'
+              )
+            );
+
+            return;
+
+          }
+
+
+          resolve(
+            data
+          );
+
+        };
+
+
+      function cleanup(){
+
+        clearTimeout(
+          timeout
+        );
+
+
+        try {
+
+          delete window[
+            callback
+          ];
+
+        } catch(e) {}
+
+
+        try {
+
+          script.remove();
+
+        } catch(e) {}
+
       }
 
-      resolve(data);
-    };
 
-    function cleanup(){
-      clearTimeout(timer);
-      delete window[callback];
-      script.remove();
+      const query =
+        new URLSearchParams({
+          action:
+            action,
+
+          callback:
+            callback,
+
+          ...params
+        });
+
+
+      script.src =
+        API_URL +
+        '?' +
+        query.toString();
+
+
+      script.onerror =
+        () => {
+
+          cleanup();
+
+          reject(
+            new Error(
+              'เรียก API ไม่สำเร็จ'
+            )
+          );
+
+        };
+
+
+      document
+      .body
+      .appendChild(
+        script
+      );
+
     }
+  );
 
-    const query = new URLSearchParams({
-      action,
-      callback,
-      api_key:API_KEY,
-      ...params
-    });
-
-    script.src =
-      API_URL +
-      '?' +
-      query.toString();
-
-    script.onerror = ()=>{
-      cleanup();
-      reject(new Error('เรียก API ไม่สำเร็จ'));
-    };
-
-    document.body.appendChild(script);
-  });
 }
 
-async function testApi(){
 
-  API_URL = document.getElementById('apiUrl').value.trim();
-  API_KEY = document.getElementById('apiKey').value.trim();
+/************************************************************
+ * START AUTO GATE
+ ************************************************************/
 
-  try{
+async function startGate(){
 
-    const r =
-      await jsonp('bootstrap');
-
-    document.getElementById('apiStatus').innerHTML =
-      'เชื่อมต่อสำเร็จ — Gate: <b>' +
-      escapeHtml(r.gate || '-') +
-      '</b>';
-
-    toast('เชื่อมต่อ API สำเร็จ');
-
-  }catch(err){
-
-    document.getElementById('apiStatus').textContent =
-      err.message;
-
-    toast(err.message);
-  }
-}
-
-async function loadBootstrap(){
-
-  try{
-
-    bootstrap =
-      await jsonp('bootstrap');
-
-    document.getElementById('gateName').textContent =
-      bootstrap.gate || '-';
-
-  }catch(err){
-
-    toast(err.message);
-  }
-}
-
-/* =========================================================
-   AUTO GATE
-========================================================= */
-
-async function startAutoGate(){
-
-  if(autoRunning){
-    toast('ระบบกำลังทำงานอยู่');
+  if (running) {
     return;
   }
 
-  if(!API_URL || !API_KEY){
-    toast('กรุณาตั้งค่า API ก่อน');
-    switchPage('configPage');
-    return;
-  }
 
-  try{
+  try {
 
     stream =
-      await navigator.mediaDevices.getUserMedia({
-        video:{
-          facingMode:'environment',
-          width:{ideal:1920},
-          height:{ideal:1080}
-        },
-        audio:false
-      });
+      await navigator
+        .mediaDevices
+        .getUserMedia({
 
-    document.getElementById('video').srcObject =
+          video: {
+
+            facingMode:
+            'environment',
+
+            width: {
+              ideal:
+              1920
+            },
+
+            height: {
+              ideal:
+              1080
+            }
+
+          },
+
+          audio:
+          false
+
+        });
+
+
+    document
+    .getElementById(
+      'video'
+    )
+    .srcObject =
       stream;
 
-    autoRunning = true;
 
-    setScanIndicator(true);
+    running =
+      true;
 
-    document.getElementById('ocrStatus').textContent =
-      'ระบบอัตโนมัติเริ่มทำงานแล้ว — รอรถเข้ากรอบ';
 
-    scheduleNextScan(1000);
+    setScanning(
+      true
+    );
 
-  }catch(err){
 
-    toast('เปิดกล้องไม่ได้: '+err.message);
+    document
+    .getElementById(
+      'ocrStatus'
+    )
+    .textContent =
+      'ระบบทำงานอัตโนมัติแล้ว';
+
+
+    scheduleScan(
+      1000
+    );
+
+
+  } catch (error) {
+
+    toast(
+      'เปิดกล้องไม่ได้: ' +
+      error.message
+    );
+
   }
+
 }
 
-function stopAutoGate(){
 
-  autoRunning = false;
+/************************************************************
+ * STOP
+ ************************************************************/
 
-  if(scanTimer){
-    clearTimeout(scanTimer);
-    scanTimer = null;
+function stopGate(){
+
+  running =
+    false;
+
+
+  if (timer) {
+
+    clearTimeout(
+      timer
+    );
+
+    timer =
+      null;
+
   }
 
-  if(stream){
-    stream.getTracks().forEach(t=>t.stop());
-    stream = null;
+
+  if (stream) {
+
+    stream
+      .getTracks()
+      .forEach(
+        track =>
+        track.stop()
+      );
+
+    stream =
+      null;
+
   }
 
-  setScanIndicator(false);
 
-  lastCandidate = '';
-  confirmCount = 0;
+  previousPlate =
+    '';
 
-  document.getElementById('confirmState').textContent =
-    '0/'+REQUIRED_CONFIRMATIONS;
 
-  document.getElementById('ocrStatus').textContent =
-    'หยุดระบบแล้ว';
+  confirmationCount =
+    0;
 
-  toast('หยุดระบบอัตโนมัติแล้ว');
+
+  setScanning(
+    false
+  );
+
+
+  document
+  .getElementById(
+    'confirmation'
+  )
+  .textContent =
+    '0/2';
+
+
+  document
+  .getElementById(
+    'ocrStatus'
+  )
+  .textContent =
+    'ระบบหยุดทำงาน';
+
 }
 
-function scheduleNextScan(delay=SCAN_INTERVAL_MS){
 
-  if(!autoRunning){
+/************************************************************
+ * SCHEDULER
+ ************************************************************/
+
+function scheduleScan(
+  delay =
+  SCAN_INTERVAL
+){
+
+  if (!running) {
     return;
   }
 
-  if(scanTimer){
-    clearTimeout(scanTimer);
-  }
 
-  scanTimer =
+  timer =
     setTimeout(
-      autoScanCycle,
+      autoScan,
       delay
     );
+
 }
 
-async function autoScanCycle(){
 
-  if(!autoRunning){
+/************************************************************
+ * AUTO SCAN
+ ************************************************************/
+
+async function autoScan(){
+
+  if (
+    !running ||
+    scanning
+  ) {
+
+    scheduleScan(
+      500
+    );
+
     return;
+
   }
 
-  if(busy){
-    scheduleNextScan(500);
-    return;
-  }
 
-  busy = true;
+  scanning =
+    true;
 
-  try{
 
-    const scan =
-      await readPlateFromCamera();
+  try {
 
-    if(!autoRunning){
+    const data =
+      await readPlate();
+
+
+    if (!data.plate) {
+
+      previousPlate =
+        '';
+
+      confirmationCount =
+        0;
+
+
+      document
+      .getElementById(
+        'confirmation'
+      )
+      .textContent =
+        '0/' +
+        CONFIRM_REQUIRED;
+
+
+      document
+      .getElementById(
+        'ocrStatus'
+      )
+      .textContent =
+        'กำลังค้นหาทะเบียน...';
+
+
       return;
+
     }
 
-    if(!scan.plate){
 
-      lastCandidate = '';
-      confirmCount = 0;
+    document
+    .getElementById(
+      'confidence'
+    )
+    .textContent =
+      data.confidence +
+      '%';
 
-      document.getElementById('confirmState').textContent =
-        '0/'+REQUIRED_CONFIRMATIONS;
 
-      document.getElementById('ocrStatus').textContent =
-        'ยังไม่พบทะเบียนชัดเจน — กำลังสแกนต่อ';
+    if (
+      data.plate ===
+      previousPlate
+    ) {
 
-      return;
-    }
+      confirmationCount++;
 
-    lastConfidence =
-      scan.confidence;
+    } else {
 
-    document.getElementById('ocrConfidence').textContent =
-      lastConfidence+'%';
+      previousPlate =
+        data.plate;
 
-    if(scan.plate === lastCandidate){
-
-      confirmCount++;
-
-    }else{
-
-      lastCandidate =
-        scan.plate;
-
-      confirmCount =
+      confirmationCount =
         1;
+
     }
 
-    document.getElementById('confirmState').textContent =
-      confirmCount+'/'+REQUIRED_CONFIRMATIONS;
 
-    document.getElementById('ocrStatus').textContent =
-      'พบ: '+scan.plate+
-      ' | OCR '+scan.confidence+
-      '% | ยืนยัน '+confirmCount+
-      '/'+REQUIRED_CONFIRMATIONS;
+    document
+    .getElementById(
+      'confirmation'
+    )
+    .textContent =
+      confirmationCount +
+      '/' +
+      CONFIRM_REQUIRED;
 
-    if(confirmCount >= REQUIRED_CONFIRMATIONS){
 
-      const now =
-        Date.now();
+    document
+    .getElementById(
+      'ocrStatus'
+    )
+    .textContent =
+      'อ่านได้: ' +
+      data.plate +
+      ' (' +
+      data.confidence +
+      '%)';
 
-      const lastTrigger =
-        cooldownMap[scan.plate] || 0;
 
-      if(now - lastTrigger >= COOLDOWN_MS){
+    if (
+      confirmationCount >=
+      CONFIRM_REQUIRED
+    ) {
 
-        cooldownMap[scan.plate] =
-          now;
+      const last =
+        cooldown[
+          data.plate
+        ] ||
+        0;
 
-        confirmCount = 0;
-        lastCandidate = '';
 
-        document.getElementById('confirmState').textContent =
-          '0/'+REQUIRED_CONFIRMATIONS;
+      if (
+        Date.now() -
+        last >=
+        COOLDOWN
+      ) {
 
-        await checkAccessAutomatically(
-          scan.plate,
-          scan.confidence,
-          scan.raw
+        cooldown[
+          data.plate
+        ] =
+          Date.now();
+
+
+        previousPlate =
+          '';
+
+        confirmationCount =
+          0;
+
+
+        document
+        .getElementById(
+          'confirmation'
+        )
+        .textContent =
+          '0/' +
+          CONFIRM_REQUIRED;
+
+
+        await checkPlate(
+          data
         );
+
       }
+
     }
 
-  }catch(err){
 
-    document.getElementById('ocrStatus').textContent =
-      'OCR Error: '+err.message;
+  } catch (error) {
 
-  }finally{
+    document
+    .getElementById(
+      'ocrStatus'
+    )
+    .textContent =
+      'OCR Error: ' +
+      error.message;
 
-    busy = false;
 
-    scheduleNextScan();
+  } finally {
+
+    scanning =
+      false;
+
+
+    scheduleScan();
+
   }
+
 }
 
-/* =========================================================
-   OCR
-========================================================= */
 
-async function readPlateFromCamera(){
+/************************************************************
+ * OCR
+ ************************************************************/
+
+async function readPlate(){
 
   const video =
-    document.getElementById('video');
+    document
+    .getElementById(
+      'video'
+    );
+
 
   const canvas =
-    document.getElementById('captureCanvas');
+    document
+    .getElementById(
+      'canvas'
+    );
+
 
   const ctx =
-    canvas.getContext('2d');
+    canvas
+    .getContext(
+      '2d'
+    );
 
-  const vw =
+
+  const width =
     video.videoWidth;
 
-  const vh =
+
+  const height =
     video.videoHeight;
 
-  if(!vw || !vh){
+
+  if (
+    !width ||
+    !height
+  ) {
+
     return {
       plate:'',
       confidence:0,
       raw:''
     };
+
   }
 
-  // Crop ให้ตรงกับกรอบ ROI บนหน้าจอ
+
   const sx =
-    Math.floor(vw * 0.20);
+    Math.floor(
+      width *
+      .18
+    );
+
 
   const sy =
-    Math.floor(vh * 0.58);
+    Math.floor(
+      height *
+      .57
+    );
+
 
   const sw =
-    Math.floor(vw * 0.60);
+    Math.floor(
+      width *
+      .64
+    );
+
 
   const sh =
-    Math.floor(vh * 0.20);
+    Math.floor(
+      height *
+      .24
+    );
 
-  // ขยายภาพ 2 เท่าก่อน OCR
+
   canvas.width =
-    sw * 2;
+    sw *
+    2;
+
 
   canvas.height =
-    sh * 2;
+    sh *
+    2;
 
-  ctx.imageSmoothingEnabled =
-    false;
 
   ctx.drawImage(
     video,
-    sx,sy,sw,sh,
-    0,0,
+
+    sx,
+    sy,
+    sw,
+    sh,
+
+    0,
+    0,
     canvas.width,
     canvas.height
   );
 
-  preprocessCanvas(canvas,ctx);
+
+  preprocess(
+    canvas,
+    ctx
+  );
+
 
   const result =
-    await Tesseract.recognize(
-      canvas,
-      'tha+eng',
-      {
-        logger:m=>{
-          if(m.status === 'recognizing text'){
-            document.getElementById('ocrStatus').textContent =
-              'กำลังอ่านทะเบียน '+Math.round((m.progress||0)*100)+'%';
+    await Tesseract
+      .recognize(
+
+        canvas,
+
+        'tha+eng',
+
+        {
+
+          logger:
+          info => {
+
+            if (
+              info.status ===
+              'recognizing text'
+            ) {
+
+              document
+              .getElementById(
+                'ocrStatus'
+              )
+              .textContent =
+                'กำลังอ่านทะเบียน ' +
+                Math.round(
+                  (
+                    info.progress ||
+                    0
+                  ) *
+                  100
+                ) +
+                '%';
+
+            }
+
           }
+
         }
-      }
-    );
+
+      );
+
 
   const raw =
-    String(result.data.text || '').trim();
+    String(
+      result.data.text ||
+      ''
+    ).trim();
+
 
   const confidence =
-    Math.round(result.data.confidence || 0);
+    Math.round(
+      result.data.confidence ||
+      0
+    );
 
-  const plate =
-    extractThaiPlate(raw);
 
   return {
-    plate,
-    confidence,
-    raw
+
+    plate:
+      extractPlate(
+        raw
+      ),
+
+    confidence:
+      confidence,
+
+    raw:
+      raw
+
   };
+
 }
 
-function preprocessCanvas(canvas,ctx){
 
-  const imageData =
+/************************************************************
+ * IMAGE PREPROCESS
+ ************************************************************/
+
+function preprocess(
+  canvas,
+  ctx
+){
+
+  const image =
     ctx.getImageData(
-      0,0,
+      0,
+      0,
       canvas.width,
       canvas.height
     );
 
-  const data =
-    imageData.data;
 
-  for(let i=0;i<data.length;i+=4){
+  const data =
+    image.data;
+
+
+  for (
+    let i = 0;
+    i < data.length;
+    i += 4
+  ) {
 
     const gray =
-      0.299*data[i] +
-      0.587*data[i+1] +
-      0.114*data[i+2];
+      .299 *
+      data[i]
+      +
+      .587 *
+      data[i + 1]
+      +
+      .114 *
+      data[i + 2];
 
-    // Contrast
-    let v =
-      (gray - 128) * 1.9 + 128;
 
-    v =
+    let value =
+      (
+        gray -
+        128
+      ) *
+      1.7 +
+      128;
+
+
+    value =
       Math.max(
         0,
-        Math.min(255,v)
+        Math.min(
+          255,
+          value
+        )
       );
 
-    // Threshold
-    v =
-      v > 150
-        ? 255
-        : 0;
 
     data[i] =
-      v;
+      value;
 
-    data[i+1] =
-      v;
+    data[i + 1] =
+      value;
 
-    data[i+2] =
-      v;
+    data[i + 2] =
+      value;
+
   }
+
 
   ctx.putImageData(
-    imageData,
-    0,0
+    image,
+    0,
+    0
   );
+
 }
 
-function extractThaiPlate(text){
 
-  let t =
-    String(text || '')
-      .toUpperCase()
-      .replace(/THAILAND|ประเทศไทย/g,' ')
-      .replace(/\n/g,' ')
-      .replace(/[|]/g,' ');
+/************************************************************
+ * THAI PLATE PARSER
+ ************************************************************/
 
-  // เก็บเฉพาะกลุ่มอักษรไทย/อังกฤษ/ตัวเลข
-  const tokens =
-    t.match(/[ก-ฮA-Z0-9]+/g) || [];
-
-  if(!tokens.length){
-    return '';
-  }
-
-  // พยายามเลือก token ที่มีทั้งตัวอักษรไทยและตัวเลข
-  let candidates =
-    tokens.filter(x=>
-      /[ก-ฮ]/.test(x) &&
-      /\d/.test(x)
-    );
-
-  // ถ้ายังไม่มี ลองต่อ token สองตัวแรก เช่น "กข" + "1234"
-  if(!candidates.length && tokens.length >= 2){
-
-    for(let i=0;i<tokens.length-1;i++){
-
-      const joined =
-        tokens[i] +
-        tokens[i+1];
-
-      if(
-        /[ก-ฮ]/.test(joined) &&
-        /\d/.test(joined)
-      ){
-        candidates.push(joined);
-      }
-    }
-  }
-
-  if(!candidates.length){
-    return '';
-  }
-
-  let plate =
-    candidates
-      .sort((a,b)=>b.length-a.length)[0];
-
-  plate =
-    plate
-      .replace(/[^ก-ฮA-Z0-9]/g,'')
-      .trim();
-
-  // ทะเบียนไทยทั่วไปไม่ควรยาวเกินราว 8-9 ตัวหลัง normalize
-  if(plate.length > 9){
-    plate =
-      plate.slice(0,9);
-  }
-
-  // ต้องมีเลขอย่างน้อย 1 ตัว
-  if(!/\d/.test(plate)){
-    return '';
-  }
-
-  return plate;
-}
-
-/* =========================================================
-   ACCESS CHECK
-========================================================= */
-
-async function checkAccessAutomatically(
-  plate,
-  confidence,
+function extractPlate(
   raw
 ){
 
-  document.getElementById('accessResult').className =
+  let text =
+    String(
+      raw ||
+      ''
+    )
+    .toUpperCase();
+
+
+  text =
+    text
+    .replace(
+      /ประเทศไทย|THAILAND/g,
+      ' '
+    );
+
+
+  const lines =
+    text
+      .split(
+        /\n/
+      )
+      .map(
+        value =>
+        value.trim()
+      )
+      .filter(
+        Boolean
+      );
+
+
+  const candidates =
+    [];
+
+
+  for (
+    const line of lines
+  ) {
+
+    const cleaned =
+      line
+      .replace(
+        /[^ก-ฮA-Z0-9]/g,
+        ''
+      );
+
+
+    if (
+      /[ก-ฮ]/.test(
+        cleaned
+      )
+      &&
+      /\d/.test(
+        cleaned
+      )
+    ) {
+
+      candidates.push(
+        cleaned
+      );
+
+    }
+
+  }
+
+
+  if (
+    candidates.length
+  ) {
+
+    return candidates
+      .sort(
+        (
+          a,
+          b
+        ) =>
+        b.length -
+        a.length
+      )[0]
+      .slice(
+        0,
+        9
+      );
+
+  }
+
+
+  const all =
+    text
+      .replace(
+        /[^ก-ฮA-Z0-9]/g,
+        ''
+      );
+
+
+  const match =
+    all.match(
+      /[ก-ฮ]{1,3}\d{1,4}/
+    );
+
+
+  if (match) {
+
+    return match[0];
+
+  }
+
+
+  return '';
+
+}
+
+
+/************************************************************
+ * CHECK DATABASE
+ ************************************************************/
+
+async function checkPlate(
+  data
+){
+
+  const box =
+    document
+    .getElementById(
+      'resultBox'
+    );
+
+
+  box.className =
     'result waiting';
 
-  document.getElementById('accessResult').innerHTML =
-    '<span class="badge orange">กำลังตรวจสิทธิ์</span>'+
-    '<div class="plate">'+escapeHtml(plate)+'</div>'+
-    '<div>ตรวจสอบกับฐานข้อมูล...</div>';
 
-  try{
+  box.innerHTML =
+    `
+    <span class="badge orange">
+    กำลังตรวจสอบ
+    </span>
 
-    const r =
-      await jsonp(
+    <div class="plate">
+    ${escapeHtml(data.plate)}
+    </div>
+
+    <div>
+    กำลังตรวจสอบฐานข้อมูล
+    </div>
+    `;
+
+
+  try {
+
+    const result =
+      await api(
         'checkAccess',
         {
-          plate_no:plate,
-          province:'',
-          confidence:confidence || 100,
-          direction:document.getElementById('direction').value,
-          gate:bootstrap.gate || '',
-          ocr_raw:raw || plate
+
+          plate_no:
+            data.plate,
+
+          confidence:
+            data.confidence,
+
+          ocr_raw:
+            data.raw,
+
+          direction:
+            document
+            .getElementById(
+              'direction'
+            )
+            .value
+
         }
       );
 
-    showAccessResult(r);
 
-    addEventRow(
-      plate,
-      r.result,
-      r.reason
+    displayResult(
+      result
     );
 
-  }catch(err){
 
-    document.getElementById('accessResult').className =
+  } catch (error) {
+
+    box.className =
       'result denied';
 
-    document.getElementById('accessResult').innerHTML =
-      '<span class="badge red">SYSTEM ERROR</span>'+
-      '<div class="plate">'+escapeHtml(plate)+'</div>'+
-      '<div>'+escapeHtml(err.message)+'</div>';
 
-    addEventRow(
-      plate,
-      'ERROR',
-      err.message
-    );
+    box.innerHTML =
+      `
+      <span class="badge red">
+      ERROR
+      </span>
+
+      <div class="plate">
+      ${escapeHtml(data.plate)}
+      </div>
+
+      <div>
+      ${escapeHtml(error.message)}
+      </div>
+      `;
+
   }
+
 }
 
-function showAccessResult(r){
+
+/************************************************************
+ * RESULT
+ ************************************************************/
+
+function displayResult(
+  result
+){
 
   const granted =
-    r.result === 'GRANTED';
+    result.result ===
+    'GRANTED';
 
-  const result =
-    document.getElementById('accessResult');
 
-  result.className =
-    'result '+(granted?'granted':'denied');
+  const box =
+    document
+    .getElementById(
+      'resultBox'
+    );
 
-  result.innerHTML =
-    '<span class="badge '+(granted?'green':'red')+'">'+
-    (granted?'อนุญาต':'ปฏิเสธ')+
-    '</span>'+
-    '<div class="plate">'+escapeHtml(r.plate_no || '—')+'</div>'+
-    '<div><b>'+escapeHtml(r.reason || '')+'</b></div>';
+
+  box.className =
+    'result ' +
+    (
+      granted
+        ?
+        'granted'
+        :
+        'denied'
+    );
+
+
+  box.innerHTML =
+    `
+
+    <span
+    class="badge ${
+      granted
+        ?
+        'green'
+        :
+        'red'
+    }"
+    >
+
+    ${
+      granted
+        ?
+        'อนุญาต'
+        :
+        'ปฏิเสธ'
+    }
+
+    </span>
+
+
+    <div class="plate">
+
+    ${
+      escapeHtml(
+        result.plate_no ||
+        '—'
+      )
+    }
+
+    </div>
+
+
+    <div>
+
+    ${
+      escapeHtml(
+        result.reason ||
+        ''
+      )
+    }
+
+    </div>
+
+    `;
+
 
   const gate =
-    document.getElementById('gateLight');
+    document
+    .getElementById(
+      'gate'
+    );
 
-  if(granted){
+
+  if (granted) {
 
     gate.className =
       'gate open';
 
+
     gate.textContent =
       'เปิด';
 
-    setTimeout(()=>{
 
-      gate.className =
-        'gate closed';
+    setTimeout(
+      () => {
 
-      gate.textContent =
-        'ปิด';
+        gate.className =
+          'gate';
 
-    },GATE_OPEN_MS);
 
-  }else{
+        gate.textContent =
+          'ปิด';
+
+      },
+      GATE_OPEN_TIME
+    );
+
+
+  } else {
 
     gate.className =
-      'gate closed';
+      'gate';
+
 
     gate.textContent =
       'ปิด';
+
   }
 
-  const v =
-    r.vehicle;
 
-  document.getElementById('vehicleInfo').innerHTML =
-    v
+  const vehicle =
+    result.vehicle;
+
+
+  document
+  .getElementById(
+    'vehicleInfo'
+  )
+  .innerHTML =
+    vehicle
+
       ?
-      '<b>'+escapeHtml(v.owner_name || '')+'</b><br>'+
-      'ประเภท: '+escapeHtml(v.owner_type || '')+'<br>'+
-      'ทะเบียน: '+escapeHtml(v.plate_no || '')+'<br>'+
-      'จังหวัด: '+escapeHtml(v.province || '')+'<br>'+
-      'รถ: '+escapeHtml(
-        [v.brand,v.model,v.color]
-          .filter(Boolean)
-          .join(' ')
-      )+'<br>'+
-      'สถานะ: '+escapeHtml(v.status || '')
+
+      `
+
+      <b>
+      ${escapeHtml(
+        vehicle.owner_name ||
+        ''
+      )}
+      </b>
+
+      <br>
+
+      ประเภท:
+      ${escapeHtml(
+        vehicle.owner_type ||
+        ''
+      )}
+
+      <br>
+
+      ทะเบียน:
+      ${escapeHtml(
+        vehicle.plate_no ||
+        ''
+      )}
+
+      <br>
+
+      จังหวัด:
+      ${escapeHtml(
+        vehicle.province ||
+        ''
+      )}
+
+      <br>
+
+      รถ:
+      ${escapeHtml(
+        [
+          vehicle.brand,
+          vehicle.model,
+          vehicle.color
+        ]
+        .filter(Boolean)
+        .join(' ')
+      )}
+
+      `
+
       :
-      'ไม่พบทะเบียนในฐานข้อมูล';
+
+      'ไม่พบทะเบียนในระบบ';
+
 }
 
-/* =========================================================
-   UI HELPERS
-========================================================= */
 
-function setScanIndicator(on){
+/************************************************************
+ * ADMIN LOGIN
+ ************************************************************/
 
-  document.getElementById('scanDot').className =
-    'dot '+(on?'on':'');
+async function loginAdmin(){
 
-  document.getElementById('scanText').textContent =
-    on
+  const pin =
+    document
+    .getElementById(
+      'adminPin'
+    )
+    .value
+    .trim();
+
+
+  try {
+
+    const result =
+      await api(
+        'verifyAdmin',
+        {
+          pin:
+          pin
+        }
+      );
+
+
+    if (
+      !result.ok
+    ) {
+
+      toast(
+        'PIN ไม่ถูกต้อง'
+      );
+
+      return;
+
+    }
+
+
+    adminPIN =
+      pin;
+
+
+    document
+    .getElementById(
+      'adminLogin'
+    )
+    .classList
+    .add(
+      'hidden'
+    );
+
+
+    document
+    .getElementById(
+      'adminArea'
+    )
+    .classList
+    .remove(
+      'hidden'
+    );
+
+
+    await loadVehicles();
+
+
+  } catch (error) {
+
+    toast(
+      error.message
+    );
+
+  }
+
+}
+
+
+/************************************************************
+ * SAVE VEHICLE
+ ************************************************************/
+
+function val(
+  id
+){
+
+  return document
+    .getElementById(
+      id
+    )
+    .value;
+
+}
+
+
+async function saveVehicle(){
+
+  try {
+
+    await api(
+      'saveVehicle',
+      {
+
+        pin:
+          adminPIN,
+
+        vehicle_id:
+          val(
+            'vehicleId'
+          ),
+
+        plate_no:
+          val(
+            'fPlate'
+          ),
+
+        province:
+          val(
+            'fProvince'
+          ),
+
+        owner_name:
+          val(
+            'fOwner'
+          ),
+
+        owner_type:
+          val(
+            'fType'
+          ),
+
+        brand:
+          val(
+            'fBrand'
+          ),
+
+        model:
+          val(
+            'fModel'
+          ),
+
+        color:
+          val(
+            'fColor'
+          ),
+
+        phone:
+          val(
+            'fPhone'
+          ),
+
+        start_date:
+          val(
+            'fStart'
+          ),
+
+        expire_date:
+          val(
+            'fExpire'
+          ),
+
+        status:
+          val(
+            'fStatus'
+          ),
+
+        note:
+          val(
+            'fNote'
+          )
+
+      }
+    );
+
+
+    toast(
+      'บันทึกเรียบร้อย'
+    );
+
+
+    clearForm();
+
+
+    await loadVehicles();
+
+
+  } catch (error) {
+
+    toast(
+      error.message
+    );
+
+  }
+
+}
+
+
+/************************************************************
+ * LOAD VEHICLES
+ ************************************************************/
+
+async function loadVehicles(){
+
+  try {
+
+    const result =
+      await api(
+        'listVehicles',
+        {
+          pin:
+          adminPIN
+        }
+      );
+
+
+    vehicles =
+      result.vehicles ||
+      [];
+
+
+    document
+    .getElementById(
+      'vehicleTable'
+    )
+    .innerHTML =
+      vehicles
+      .map(
+        (
+          vehicle,
+          index
+        ) => `
+
+        <tr>
+
+        <td>
+        <b>
+        ${
+          escapeHtml(
+            vehicle.plate_no
+          )
+        }
+        </b>
+        </td>
+
+        <td>
+        ${
+          escapeHtml(
+            vehicle.province
+          )
+        }
+        </td>
+
+        <td>
+        ${
+          escapeHtml(
+            vehicle.owner_name
+          )
+        }
+        </td>
+
+        <td>
+        ${
+          escapeHtml(
+            vehicle.owner_type
+          )
+        }
+        </td>
+
+        <td>
+        ${
+          escapeHtml(
+            [
+              vehicle.brand,
+              vehicle.model,
+              vehicle.color
+            ]
+            .filter(Boolean)
+            .join(' ')
+          )
+        }
+        </td>
+
+        <td>
+        ${
+          escapeHtml(
+            vehicle.status
+          )
+        }
+        </td>
+
+        <td>
+
+        <button
+        class="ghost"
+        onclick="editVehicle(${index})"
+        >
+        แก้ไข
+        </button>
+
+        <button
+        class="danger"
+        onclick="removeVehicle('${escapeJs(vehicle.vehicle_id)}')"
+        >
+        ลบ
+        </button>
+
+        </td>
+
+        </tr>
+
+        `
+      )
+      .join('');
+
+
+  } catch (error) {
+
+    toast(
+      error.message
+    );
+
+  }
+
+}
+
+
+/************************************************************
+ * EDIT VEHICLE
+ ************************************************************/
+
+function editVehicle(
+  index
+){
+
+  const v =
+    vehicles[
+      index
+    ];
+
+
+  document
+  .getElementById(
+    'vehicleId'
+  )
+  .value =
+    v.vehicle_id ||
+    '';
+
+
+  document
+  .getElementById(
+    'fPlate'
+  )
+  .value =
+    v.plate_no ||
+    '';
+
+
+  document
+  .getElementById(
+    'fProvince'
+  )
+  .value =
+    v.province ||
+    '';
+
+
+  document
+  .getElementById(
+    'fOwner'
+  )
+  .value =
+    v.owner_name ||
+    '';
+
+
+  document
+  .getElementById(
+    'fType'
+  )
+  .value =
+    v.owner_type ||
+    'STAFF';
+
+
+  document
+  .getElementById(
+    'fBrand'
+  )
+  .value =
+    v.brand ||
+    '';
+
+
+  document
+  .getElementById(
+    'fModel'
+  )
+  .value =
+    v.model ||
+    '';
+
+
+  document
+  .getElementById(
+    'fColor'
+  )
+  .value =
+    v.color ||
+    '';
+
+
+  document
+  .getElementById(
+    'fPhone'
+  )
+  .value =
+    v.phone ||
+    '';
+
+
+  document
+  .getElementById(
+    'fStatus'
+  )
+  .value =
+    v.status ||
+    'ACTIVE';
+
+
+  document
+  .getElementById(
+    'fNote'
+  )
+  .value =
+    v.note ||
+    '';
+
+}
+
+
+/************************************************************
+ * DELETE
+ ************************************************************/
+
+async function removeVehicle(
+  id
+){
+
+  if (
+    !confirm(
+      'ยืนยันการลบทะเบียนนี้?'
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  try {
+
+    await api(
+      'deleteVehicle',
+      {
+
+        pin:
+          adminPIN,
+
+        vehicle_id:
+          id
+
+      }
+    );
+
+
+    toast(
+      'ลบแล้ว'
+    );
+
+
+    await loadVehicles();
+
+
+  } catch (error) {
+
+    toast(
+      error.message
+    );
+
+  }
+
+}
+
+
+/************************************************************
+ * CLEAR FORM
+ ************************************************************/
+
+function clearForm(){
+
+  [
+    'vehicleId',
+    'fPlate',
+    'fProvince',
+    'fOwner',
+    'fBrand',
+    'fModel',
+    'fColor',
+    'fPhone',
+    'fStart',
+    'fExpire',
+    'fNote'
+  ]
+  .forEach(
+    id => {
+
+      document
+      .getElementById(
+        id
+      )
+      .value =
+        '';
+
+    }
+  );
+
+
+  document
+  .getElementById(
+    'fType'
+  )
+  .value =
+    'STAFF';
+
+
+  document
+  .getElementById(
+    'fStatus'
+  )
+  .value =
+    'ACTIVE';
+
+}
+
+
+/************************************************************
+ * SCAN INDICATOR
+ ************************************************************/
+
+function setScanning(
+  active
+){
+
+  document
+  .getElementById(
+    'scanDot'
+  )
+  .className =
+    'dot ' +
+    (
+      active
+        ?
+        'active'
+        :
+        ''
+    );
+
+
+  document
+  .getElementById(
+    'scanText'
+  )
+  .textContent =
+    active
       ?
       'กำลังสแกน'
       :
-      'หยุดสแกน';
+      'หยุด';
+
 }
 
-function addEventRow(
-  plate,
-  result,
-  reason
+
+/************************************************************
+ * ESCAPE
+ ************************************************************/
+
+function escapeHtml(
+  value
 ){
 
-  const row = {
-    time:new Date().toLocaleTimeString('th-TH'),
-    plate,
-    result,
-    reason
-  };
+  return String(
+    value ??
+    ''
+  )
+  .replace(
+    /[&<>"']/g,
+    char => ({
+      '&':
+      '&amp;',
 
-  eventRows.unshift(row);
+      '<':
+      '&lt;',
 
-  if(eventRows.length > 10){
-    eventRows.pop();
-  }
+      '>':
+      '&gt;',
 
-  document.getElementById('eventTable').innerHTML =
-    eventRows.map(x=>`
-      <tr>
-        <td>${escapeHtml(x.time)}</td>
-        <td><b>${escapeHtml(x.plate)}</b></td>
-        <td>${escapeHtml(x.result)}</td>
-        <td>${escapeHtml(x.reason)}</td>
-      </tr>
-    `).join('');
+      '"':
+      '&quot;',
+
+      "'":
+      '&#039;'
+
+    })[
+      char
+    ]
+  );
+
 }
 
-function switchPage(id){
 
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+function escapeJs(
+  value
+){
 
-  document.getElementById(id).classList.add('active');
+  return String(
+    value ??
+    ''
+  )
+  .replace(
+    /\\/g,
+    '\\\\'
+  )
+  .replace(
+    /'/g,
+    "\\'"
+  );
 
-  const btn =
-    document.querySelector(
-      'nav button[data-page="'+id+'"]'
+}
+
+
+/************************************************************
+ * TOAST
+ ************************************************************/
+
+function toast(
+  message
+){
+
+  const toast =
+    document
+    .getElementById(
+      'toast'
     );
 
-  if(btn){
-    btn.classList.add('active');
-  }
-}
 
-function escapeHtml(v){
-
-  return String(v ?? '')
-    .replace(/[&<>"']/g,c=>({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      '"':'&quot;',
-      "'":'&#039;'
-    }[c]));
-}
-
-function toast(message){
-
-  const el =
-    document.getElementById('toast');
-
-  el.textContent =
+  toast.textContent =
     message;
 
-  el.style.display =
+
+  toast.style.display =
     'block';
 
-  setTimeout(()=>{
-    el.style.display='none';
-  },3200);
+
+  setTimeout(
+    () => {
+
+      toast.style.display =
+        'none';
+
+    },
+    3200
+  );
+
 }
+
 </script>
 
+
 </body>
+
 </html>
