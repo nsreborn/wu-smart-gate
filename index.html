@@ -1,495 +1,1073 @@
 <!doctype html>
 <html lang="th">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>WU Smart Gate Demo</title>
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<title>
+WU Smart Gate — Fast Scan Large ROI
+</title>
+
+<script
+src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
+</script>
 
 <style>
 
 :root{
+
   --purple:#5b2aa8;
-  --purple2:#311366;
+  --purple-dark:#32136b;
+
   --orange:#f58220;
+
   --green:#148354;
+
   --red:#c63b3b;
-  --gold:#f2c94c;
+
+  --yellow:#f2c94c;
+
   --bg:#f5f6fa;
-  --card:#fff;
-  --line:#e8e9ef;
+
+  --card:#ffffff;
+
+  --line:#e7e9ef;
+
   --text:#202331;
+
   --muted:#747b8d;
+
 }
+
 
 *{
   box-sizing:border-box;
 }
 
+
 body{
+
   margin:0;
-  font-family:Arial,"Noto Sans Thai",sans-serif;
-  background:var(--bg);
-  color:var(--text);
+
+  font-family:
+  Arial,
+  "Noto Sans Thai",
+  sans-serif;
+
+  background:
+  var(--bg);
+
+  color:
+  var(--text);
+
 }
+
 
 header{
-  background:linear-gradient(135deg,var(--purple2),var(--purple));
-  color:#fff;
-  padding:16px 22px;
+
+  background:
+  linear-gradient(
+    135deg,
+    var(--purple-dark),
+    var(--purple)
+  );
+
+  color:white;
+
+  padding:
+  16px 22px;
 
   display:flex;
-  justify-content:space-between;
+
+  justify-content:
+  space-between;
+
   align-items:center;
+
   gap:16px;
+
 }
+
 
 .brand{
+
   display:flex;
+
   align-items:center;
+
   gap:12px;
+
 }
+
 
 .logo{
-  width:46px;
-  height:46px;
 
-  background:#fff;
-  color:var(--purple);
+  width:48px;
 
-  border-radius:12px;
+  height:48px;
+
+  border-radius:13px;
+
+  background:white;
+
+  color:
+  var(--purple);
 
   display:grid;
+
   place-items:center;
 
   font-weight:900;
+
 }
+
 
 h1{
-  font-size:20px;
+
   margin:0;
+
+  font-size:21px;
+
 }
+
 
 header small{
+
   opacity:.8;
+
 }
+
 
 nav{
+
   display:flex;
+
   gap:8px;
+
 }
 
-nav button{
-  background:#ffffff1c;
-  color:white;
-}
-
-nav button.active{
-  background:white;
-  color:var(--purple);
-}
 
 button{
+
   border:0;
+
   border-radius:10px;
 
-  padding:11px 15px;
+  padding:
+  11px 15px;
+
+  cursor:pointer;
 
   font-weight:800;
-  cursor:pointer;
+
 }
 
-.primary{
-  background:var(--purple);
-  color:#fff;
-}
 
-.success{
-  background:var(--green);
-  color:#fff;
-}
+nav button{
 
-.danger{
-  background:var(--red);
-  color:#fff;
-}
+  background:
+  rgba(
+    255,
+    255,
+    255,
+    .12
+  );
 
-.orange{
-  background:var(--orange);
-  color:#fff;
-}
-
-.ghost{
-  background:#eef0f6;
-  color:#303544;
-}
-
-main{
-  max-width:1400px;
-  margin:20px auto;
-  padding:0 16px;
-}
-
-.page{
-  display:none;
-}
-
-.page.active{
-  display:block;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1.35fr .65fr;
-  gap:18px;
-}
-
-.card{
-  background:white;
-
-  border:1px solid var(--line);
-  border-radius:18px;
-
-  padding:18px;
-
-  box-shadow:0 8px 25px #17203a0b;
-}
-
-.card h2{
-  margin:0 0 14px;
-  font-size:18px;
-}
-
-.camera{
-  position:relative;
-
-  background:#111;
-
-  border-radius:16px;
-  overflow:hidden;
-
-  aspect-ratio:16/9;
-}
-
-video{
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-}
-
-.roi{
-  position:absolute;
-
-  left:18%;
-  right:18%;
-
-  bottom:19%;
-
-  height:24%;
-
-  border:3px solid var(--gold);
-  border-radius:12px;
-
-  box-shadow:0 0 0 999px #0007;
-}
-
-.roi-label{
-  position:absolute;
-
-  left:18%;
-  bottom:43%;
-
-  background:var(--gold);
-
-  padding:6px 10px;
-
-  border-radius:8px 8px 0 0;
-
-  font-weight:900;
-}
-
-.scan{
-  position:absolute;
-
-  top:15px;
-  right:15px;
-
-  background:#0009;
   color:white;
 
-  padding:8px 10px;
-
-  border-radius:999px;
-
-  font-size:12px;
-
-  display:flex;
-  align-items:center;
-  gap:8px;
 }
 
-.dot{
-  width:10px;
-  height:10px;
 
-  border-radius:50%;
+nav button.active{
 
-  background:#999;
+  background:white;
+
+  color:
+  var(--purple);
+
 }
 
-.dot.on{
-  background:#35d07f;
-  box-shadow:0 0 10px #35d07f;
+
+.primary{
+
+  background:
+  var(--purple);
+
+  color:white;
+
 }
 
-.toolbar{
-  display:flex;
-  flex-wrap:wrap;
 
-  gap:9px;
+.danger{
 
-  margin-top:12px;
+  background:
+  var(--red);
+
+  color:white;
+
 }
 
-.result{
-  margin-top:14px;
 
-  border-radius:16px;
+.success{
 
-  padding:18px;
+  background:
+  var(--green);
 
-  background:#f1f2f7;
+  color:white;
+
 }
 
-.result.granted{
-  background:#e8f6ef;
-  border:1px solid #b9dfca;
+
+.orange{
+
+  background:
+  var(--orange);
+
+  color:white;
+
 }
 
-.result.denied{
-  background:#fff0f0;
-  border:1px solid #efc3c3;
+
+.ghost{
+
+  background:
+  #eef0f6;
+
+  color:
+  #303544;
+
 }
 
-.result.waiting{
-  background:#fff8e7;
-  border:1px solid #f0d790;
+
+main{
+
+  max-width:
+  1400px;
+
+  margin:
+  20px auto;
+
+  padding:
+  0 16px;
+
 }
 
-.badge{
-  display:inline-block;
 
-  border-radius:999px;
+.page{
 
-  padding:6px 10px;
+  display:none;
 
-  background:#eceef4;
-
-  font-size:12px;
-  font-weight:900;
 }
 
-.badge.green{
-  background:#dff3e8;
-  color:#0d6941;
-}
 
-.badge.red{
-  background:#fde2e2;
-  color:#982525;
-}
+.page.active{
 
-.badge.orange{
-  background:#fff0d8;
-  color:#9e5d00;
-}
-
-.plate{
-  font-size:44px;
-  font-weight:900;
-
-  margin:8px 0;
-}
-
-.gate{
-  height:132px;
-
-  border-radius:18px;
-
-  display:grid;
-  place-items:center;
-
-  background:var(--red);
-  color:#fff;
-
-  font-size:34px;
-  font-weight:900;
-
-  transition:.2s;
-}
-
-.gate.open{
-  background:var(--green);
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-
-  gap:10px;
-
-  margin-top:12px;
-}
-
-.stat{
-  background:#f7f8fb;
-
-  border-radius:12px;
-
-  padding:12px;
-}
-
-.stat small{
-  color:var(--muted);
-}
-
-.stat b{
   display:block;
 
-  margin-top:3px;
-
-  font-size:18px;
 }
 
-.mini{
-  font-size:12px;
-  color:var(--muted);
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:
+  1.4fr .6fr;
+
+  gap:18px;
+
 }
+
+
+.card{
+
+  background:
+  var(--card);
+
+  border:
+  1px solid
+  var(--line);
+
+  border-radius:
+  18px;
+
+  padding:
+  18px;
+
+  box-shadow:
+  0 8px 28px
+  rgba(
+    20,
+    30,
+    60,
+    .05
+  );
+
+}
+
+
+.card h2{
+
+  margin:
+  0 0 14px;
+
+  font-size:
+  18px;
+
+}
+
+
+.note{
+
+  background:
+  #eef3ff;
+
+  border:
+  1px solid
+  #cfdbf5;
+
+  border-radius:
+  12px;
+
+  padding:
+  11px 12px;
+
+  margin-bottom:
+  12px;
+
+  font-size:
+  13px;
+
+  color:
+  #34506f;
+
+}
+
+
+.camera{
+
+  position:
+  relative;
+
+  background:
+  #0e0e10;
+
+  border-radius:
+  17px;
+
+  overflow:hidden;
+
+  aspect-ratio:
+  16 / 9;
+
+}
+
+
+video{
+
+  display:block;
+
+  width:
+  100%;
+
+  height:
+  100%;
+
+  object-fit:
+  cover;
+
+}
+
+
+/* ============================= */
+/* LARGE LICENSE PLATE ROI       */
+/* ============================= */
+
+.roi{
+
+  position:absolute;
+
+  left:12%;
+  right:12%;
+
+  bottom:18%;
+
+  height:32%;
+
+  border:
+  3px solid
+  var(--yellow);
+
+  border-radius:
+  14px;
+
+  box-shadow:
+  0 0 0 999px
+  rgba(
+    0,
+    0,
+    0,
+    .44
+  );
+
+}
+
+
+.roi::before{
+
+  content:"";
+
+  position:absolute;
+
+  left:-3px;
+  top:-3px;
+
+  width:40px;
+  height:40px;
+
+  border-left:
+  7px solid white;
+
+  border-top:
+  7px solid white;
+
+  border-radius:
+  7px 0 0 0;
+
+}
+
+
+.roi::after{
+
+  content:"";
+
+  position:absolute;
+
+  right:-3px;
+  bottom:-3px;
+
+  width:40px;
+  height:40px;
+
+  border-right:
+  7px solid white;
+
+  border-bottom:
+  7px solid white;
+
+  border-radius:
+  0 0 7px 0;
+
+}
+
+
+.roi-label{
+
+  position:absolute;
+
+  left:12%;
+
+  bottom:50%;
+
+  background:
+  var(--yellow);
+
+  color:
+  #222;
+
+  padding:
+  7px 12px;
+
+  border-radius:
+  8px 8px 0 0;
+
+  font-weight:900;
+
+  font-size:13px;
+
+}
+
+
+.scan-status{
+
+  position:absolute;
+
+  right:14px;
+
+  top:14px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  padding:
+  8px 12px;
+
+  border-radius:
+  999px;
+
+  background:
+  rgba(
+    0,
+    0,
+    0,
+    .72
+  );
+
+  color:white;
+
+  font-size:
+  12px;
+
+}
+
+
+.dot{
+
+  width:10px;
+
+  height:10px;
+
+  border-radius:
+  50%;
+
+  background:
+  #888;
+
+}
+
+
+.dot.on{
+
+  background:
+  #36da83;
+
+  box-shadow:
+  0 0 10px
+  #36da83;
+
+}
+
+
+.fast-badge{
+
+  position:absolute;
+
+  left:14px;
+
+  top:14px;
+
+  background:
+  var(--green);
+
+  color:white;
+
+  padding:
+  7px 10px;
+
+  font-size:
+  11px;
+
+  font-weight:
+  900;
+
+  border-radius:
+  999px;
+
+}
+
+
+.toolbar{
+
+  margin-top:
+  12px;
+
+  display:flex;
+
+  flex-wrap:
+  wrap;
+
+  gap:8px;
+
+}
+
 
 input,
 select,
 textarea{
-  width:100%;
 
-  padding:11px 12px;
+  width:
+  100%;
 
-  border:1px solid var(--line);
-  border-radius:10px;
+  padding:
+  11px 12px;
 
-  font-size:15px;
+  border:
+  1px solid
+  var(--line);
+
+  border-radius:
+  10px;
 
   background:white;
+
+  font-size:
+  15px;
+
 }
+
 
 label{
+
   display:block;
 
-  font-size:13px;
-  color:var(--muted);
+  margin-bottom:
+  6px;
 
-  margin:0 0 6px;
+  color:
+  var(--muted);
+
+  font-size:
+  13px;
+
 }
+
+
+.result{
+
+  margin-top:
+  14px;
+
+  padding:
+  18px;
+
+  border-radius:
+  16px;
+
+  background:
+  #f1f2f7;
+
+}
+
+
+.result.waiting{
+
+  background:
+  #fff8e8;
+
+  border:
+  1px solid
+  #edd995;
+
+}
+
+
+.result.granted{
+
+  background:
+  #e7f7ef;
+
+  border:
+  1px solid
+  #b9e2cb;
+
+}
+
+
+.result.denied{
+
+  background:
+  #fff0f0;
+
+  border:
+  1px solid
+  #efc1c1;
+
+}
+
+
+.badge{
+
+  display:
+  inline-block;
+
+  border-radius:
+  999px;
+
+  padding:
+  6px 10px;
+
+  font-size:
+  12px;
+
+  font-weight:
+  900;
+
+}
+
+
+.badge.orange{
+
+  background:
+  #fff0d7;
+
+  color:
+  #975800;
+
+}
+
+
+.badge.green{
+
+  background:
+  #dff3e8;
+
+  color:
+  #0a6840;
+
+}
+
+
+.badge.red{
+
+  background:
+  #fce0e0;
+
+  color:
+  #992727;
+
+}
+
+
+.plate{
+
+  font-size:
+  48px;
+
+  font-weight:
+  900;
+
+  line-height:
+  1.1;
+
+  margin:
+  9px 0;
+
+}
+
+
+.gate{
+
+  height:
+  150px;
+
+  border-radius:
+  18px;
+
+  display:grid;
+
+  place-items:center;
+
+  background:
+  var(--red);
+
+  color:white;
+
+  font-size:
+  38px;
+
+  font-weight:
+  900;
+
+  transition:
+  .18s;
+
+}
+
+
+.gate.open{
+
+  background:
+  var(--green);
+
+  transform:
+  scale(
+    1.015
+  );
+
+}
+
+
+.stats{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    2,
+    1fr
+  );
+
+  gap:
+  10px;
+
+  margin-top:
+  12px;
+
+}
+
+
+.stat{
+
+  background:
+  #f7f8fb;
+
+  border-radius:
+  12px;
+
+  padding:
+  12px;
+
+}
+
+
+.stat small{
+
+  display:block;
+
+  color:
+  var(--muted);
+
+  font-size:
+  11px;
+
+}
+
+
+.stat b{
+
+  display:block;
+
+  margin-top:
+  4px;
+
+  font-size:
+  17px;
+
+}
+
+
+.statusbox{
+
+  margin-top:
+  12px;
+
+  padding:
+  12px;
+
+  border-radius:
+  12px;
+
+  background:
+  #f8f9fc;
+
+  border:
+  1px solid
+  var(--line);
+
+}
+
+
+.statusbox strong{
+
+  display:block;
+
+  margin-bottom:
+  4px;
+
+}
+
+
+.mini{
+
+  color:
+  var(--muted);
+
+  font-size:
+  12px;
+
+}
+
 
 .formgrid{
+
   display:grid;
-  grid-template-columns:repeat(2,1fr);
 
-  gap:12px;
+  grid-template-columns:
+  repeat(
+    2,
+    1fr
+  );
+
+  gap:
+  12px;
+
 }
 
-.full{
-  grid-column:1/-1;
-}
 
 .tablewrap{
+
   overflow:auto;
 
-  max-height:520px;
+  border:
+  1px solid
+  var(--line);
 
-  border:1px solid var(--line);
-  border-radius:12px;
+  border-radius:
+  12px;
+
+  max-height:
+  450px;
+
 }
+
 
 table{
-  width:100%;
 
-  border-collapse:collapse;
+  width:
+  100%;
 
-  font-size:13px;
+  border-collapse:
+  collapse;
+
+  font-size:
+  13px;
+
 }
+
 
 th,
 td{
-  padding:10px;
 
-  border-bottom:1px solid var(--line);
+  padding:
+  10px;
+
+  border-bottom:
+  1px solid
+  var(--line);
 
   text-align:left;
+
+  white-space:
+  nowrap;
+
 }
+
 
 th{
-  background:#fafbfc;
+
+  background:
+  #fafbfc;
+
+  position:
+  sticky;
+
+  top:
+  0;
+
 }
 
-.note{
-  background:#eef3ff;
-
-  border:1px solid #cddaf9;
-
-  padding:12px;
-
-  border-radius:10px;
-
-  margin-bottom:12px;
-}
 
 .hidden{
-  display:none!important;
+
+  display:none !important;
+
 }
 
+
 #toast{
+
   display:none;
 
   position:fixed;
 
-  right:18px;
-  bottom:18px;
+  right:
+  18px;
 
-  z-index:999;
+  bottom:
+  18px;
 
-  background:#20232b;
-  color:#fff;
+  background:
+  #20232b;
 
-  padding:12px 16px;
+  color:white;
 
-  border-radius:10px;
+  padding:
+  12px 16px;
+
+  border-radius:
+  10px;
+
+  z-index:
+  9999;
+
 }
 
-@media(max-width:900px){
+
+@media(
+  max-width:
+  900px
+){
+
+  header{
+
+    flex-direction:
+    column;
+
+    align-items:
+    flex-start;
+
+  }
+
+
+  nav{
+
+    width:
+    100%;
+
+  }
+
+
+  nav button{
+
+    flex:
+    1;
+
+  }
+
 
   .grid,
   .formgrid{
-    grid-template-columns:1fr;
+
+    grid-template-columns:
+    1fr;
+
   }
 
-  header{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  nav{
-    width:100%;
-  }
-
-  nav button{
-    flex:1;
-  }
 
   .plate{
-    font-size:34px;
+
+    font-size:
+    38px;
+
   }
 
 }
@@ -498,49 +1076,64 @@ th{
 
 </head>
 
+
 <body>
+
 
 <header>
 
+
 <div class="brand">
+
 
 <div class="logo">
 WU
 </div>
 
+
 <div>
 
 <h1>
-WU Smart Gate — Demo
+WU Smart Gate
 </h1>
 
 <small>
-Automatic Thai License Plate Prototype
+Fast Automatic License Plate Demo
 </small>
 
 </div>
 
+
 </div>
+
 
 <nav>
 
 <button
 class="active"
 data-page="gatePage">
+
 Auto Gate
+
 </button>
+
 
 <button
 data-page="adminPage">
+
 Admin
+
 </button>
 
 </nav>
 
+
 </header>
 
 
+
 <main>
+
 
 
 <section
@@ -553,20 +1146,22 @@ class="page active">
 
 <div class="card">
 
+
 <h2>
-กล้องตรวจทะเบียนอัตโนมัติ
+Fast Scan — ตรวจทะเบียนอัตโนมัติ
 </h2>
 
 
 <div class="note">
 
-ระบบ Demo นี้ไม่ใช้ API หรือ Apps Script
-ข้อมูลทะเบียนและ Log จะเก็บใน Browser เครื่องนี้
+กรอบทะเบียนถูกขยายให้ใหญ่ขึ้น เพื่อให้รถไม่จำเป็นต้องอยู่ตรงกลางเป๊ะ และเหมาะกับการ Demo รถที่เคลื่อนผ่านกล้อง
 
 </div>
 
 
+
 <div class="camera">
+
 
 <video
 id="video"
@@ -576,15 +1171,21 @@ playsinline>
 </video>
 
 
-<div class="roi-label">
-วางป้ายทะเบียนในกรอบ
+<div class="fast-badge">
+FAST SCAN
 </div>
+
+
+<div class="roi-label">
+LICENSE PLATE AREA
+</div>
+
 
 <div class="roi">
 </div>
 
 
-<div class="scan">
+<div class="scan-status">
 
 <span
 id="scanDot"
@@ -592,14 +1193,15 @@ class="dot">
 </span>
 
 <span
-id="scanText">
-หยุดสแกน
+id="scanStatusText">
+หยุด
 </span>
 
 </div>
 
 
 </div>
+
 
 
 <canvas
@@ -608,9 +1210,12 @@ class="hidden">
 </canvas>
 
 
+
 <div class="toolbar">
 
+
 <button
+id="startButton"
 class="primary"
 onclick="startAutoGate()">
 
@@ -642,17 +1247,25 @@ style="width:auto">
 
 </select>
 
+
 </div>
+
 
 
 <div
 id="ocrStatus"
-class="mini"
-style="margin-top:10px">
+class="statusbox">
 
-ระบบยังไม่เริ่มทำงาน
+<strong>
+สถานะ
+</strong>
+
+<span>
+ระบบยังไม่เริ่ม
+</span>
 
 </div>
+
 
 
 <div
@@ -668,24 +1281,28 @@ class="result waiting">
 </div>
 
 <div>
-ระบบจะตรวจทะเบียนอัตโนมัติ
+ระบบพร้อมตรวจสอบทะเบียน
 </div>
 
 </div>
+
 
 
 <div style="margin-top:18px">
 
+
 <h2>
-เหตุการณ์ล่าสุด
+ประวัติล่าสุด
 </h2>
 
 
 <div
 class="tablewrap"
-style="max-height:320px">
+style="max-height:300px">
+
 
 <table>
+
 
 <thead>
 
@@ -704,11 +1321,11 @@ style="max-height:320px">
 </th>
 
 <th>
-ผล
+OCR
 </th>
 
 <th>
-เหตุผล
+ผล
 </th>
 
 </tr>
@@ -723,12 +1340,15 @@ id="eventTable">
 
 </table>
 
-</div>
 
 </div>
 
 
 </div>
+
+
+</div>
+
 
 
 <div>
@@ -736,8 +1356,9 @@ id="eventTable">
 
 <div class="card">
 
+
 <h2>
-สถานะประตูจำลอง
+สถานะประตู
 </h2>
 
 
@@ -756,7 +1377,7 @@ class="gate">
 <div class="stat">
 
 <small>
-ทะเบียน
+ทะเบียนล่าสุด
 </small>
 
 <b id="lastPlate">
@@ -769,7 +1390,7 @@ class="gate">
 <div class="stat">
 
 <small>
-OCR
+OCR Confidence
 </small>
 
 <b id="ocrConfidence">
@@ -782,11 +1403,24 @@ OCR
 <div class="stat">
 
 <small>
-ยืนยัน
+เวลา OCR ล่าสุด
 </small>
 
-<b id="confirmState">
-0/2
+<b id="ocrSpeed">
+-
+</b>
+
+</div>
+
+
+<div class="stat">
+
+<small>
+สถานะ OCR
+</small>
+
+<b id="workerState">
+OFF
 </b>
 
 </div>
@@ -798,13 +1432,16 @@ OCR
 </div>
 
 
+
 <div
 class="card"
 style="margin-top:18px">
 
+
 <h2>
-ข้อมูลรถล่าสุด
+ข้อมูลรถ
 </h2>
+
 
 <div
 id="vehicleInfo"
@@ -813,6 +1450,7 @@ class="mini">
 ยังไม่มีข้อมูล
 
 </div>
+
 
 </div>
 
@@ -826,6 +1464,9 @@ class="mini">
 </section>
 
 
+
+
+
 <section
 id="adminPage"
 class="page">
@@ -835,6 +1476,7 @@ class="page">
 
 
 <div class="card">
+
 
 <h2>
 ลงทะเบียนรถ
@@ -847,12 +1489,12 @@ class="page">
 <div>
 
 <label>
-ทะเบียนรถ *
+ทะเบียน *
 </label>
 
 <input
 id="fPlate"
-placeholder="เช่น กข1234">
+placeholder="กข1234">
 
 </div>
 
@@ -889,8 +1531,7 @@ placeholder="ชื่อ-สกุล">
 ประเภท
 </label>
 
-<select
-id="fType">
+<select id="fType">
 
 <option value="STAFF">
 บุคลากร
@@ -954,8 +1595,7 @@ placeholder="ขาว">
 สถานะ
 </label>
 
-<select
-id="fStatus">
+<select id="fStatus">
 
 <option value="ACTIVE">
 ACTIVE
@@ -977,13 +1617,15 @@ BLACKLIST
 </div>
 
 
+
 <div class="toolbar">
+
 
 <button
 class="primary"
 onclick="saveVehicle()">
 
-บันทึกทะเบียน
+บันทึก
 
 </button>
 
@@ -992,7 +1634,7 @@ onclick="saveVehicle()">
 class="ghost"
 onclick="clearVehicleForm()">
 
-ล้างฟอร์ม
+ล้าง
 
 </button>
 
@@ -1001,7 +1643,7 @@ onclick="clearVehicleForm()">
 class="orange"
 onclick="seedDemo()">
 
-เพิ่มข้อมูลตัวอย่าง
+ข้อมูลทดลอง
 
 </button>
 
@@ -1012,36 +1654,68 @@ onclick="seedDemo()">
 </div>
 
 
+
 <div class="card">
 
+
 <h2>
-ระบบ Demo
+ตั้งค่า Fast Scan
 </h2>
 
 
 <div class="mini">
 
-ฐานข้อมูล: localStorage
+<strong>
+OCR Mode
+</strong>
+
+<br>
+
+Persistent Worker
 
 <br><br>
 
-เปิดประตูเมื่อ:
-ทะเบียนอยู่ในระบบและสถานะ ACTIVE
+
+<strong>
+Scan interval
+</strong>
+
+<br>
+
+600 ms
 
 <br><br>
 
-ปฏิเสธเมื่อ:
-ไม่พบทะเบียน / INACTIVE / BLACKLIST
+
+<strong>
+Confidence ขั้นต่ำ
+</strong>
+
+<br>
+
+40%
 
 <br><br>
 
-Gate open:
-3.5 วินาที
+
+<strong>
+กรอบตรวจทะเบียน
+</strong>
+
+<br>
+
+กว้างประมาณ 76% ของภาพ
 
 <br><br>
 
-Cooldown:
-10 วินาที
+
+<strong>
+Cooldown รถคันเดิม
+</strong>
+
+<br>
+
+5 วินาที
 
 </div>
 
@@ -1061,7 +1735,7 @@ Export JSON
 class="danger"
 onclick="clearAllData()">
 
-ล้างข้อมูลทั้งหมด
+ล้างข้อมูล
 
 </button>
 
@@ -1072,6 +1746,7 @@ onclick="clearAllData()">
 
 
 </div>
+
 
 
 <div
@@ -1079,32 +1754,16 @@ class="card"
 style="margin-top:18px">
 
 
-<div
-style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-">
-
 <h2>
 ทะเบียนรถในระบบ
 </h2>
 
 
-<button
-class="ghost"
-onclick="renderVehicles()">
-
-รีเฟรช
-
-</button>
-
-</div>
-
-
 <div class="tablewrap">
 
+
 <table>
+
 
 <thead>
 
@@ -1150,6 +1809,7 @@ id="vehicleTable">
 
 </table>
 
+
 </div>
 
 
@@ -1159,57 +1819,90 @@ id="vehicleTable">
 </section>
 
 
+
 </main>
+
 
 
 <div id="toast">
 </div>
 
 
+
 <script>
 
+/************************************************************
+ * CONFIG
+ ************************************************************/
+
 const STORAGE_VEHICLES =
-'wu_gate_demo_vehicles_v1';
+'wu_fast_gate_vehicles_v2';
+
 
 const STORAGE_LOGS =
-'wu_gate_demo_logs_v1';
+'wu_fast_gate_logs_v2';
 
 
 const SCAN_INTERVAL_MS =
-2200;
+600;
+
+
+const MIN_CONFIDENCE =
+40;
+
 
 const REQUIRED_CONFIRMATIONS =
-2;
+1;
+
 
 const COOLDOWN_MS =
-10000;
+5000;
+
 
 const GATE_OPEN_MS =
 3500;
 
 
+
+/************************************************************
+ * STATE
+ ************************************************************/
+
 let stream =
 null;
+
 
 let autoRunning =
 false;
 
+
 let scanTimer =
 null;
 
+
 let busy =
+false;
+
+
+let ocrWorker =
+null;
+
+
+let ocrReady =
 false;
 
 
 let lastCandidate =
 '';
 
+
 let confirmCount =
 0;
 
 
-const cooldownMap =
+let cooldownMap =
 {};
+
 
 
 /************************************************************
@@ -1233,8 +1926,10 @@ document
           'nav button'
         )
         .forEach(
-          x =>
-          x.classList.remove(
+          item =>
+          item
+          .classList
+          .remove(
             'active'
           )
         );
@@ -1245,8 +1940,10 @@ document
           '.page'
         )
         .forEach(
-          x =>
-          x.classList.remove(
+          item =>
+          item
+          .classList
+          .remove(
             'active'
           )
         );
@@ -1285,6 +1982,7 @@ document
 );
 
 
+
 /************************************************************
  * STORAGE
  ************************************************************/
@@ -1302,7 +2000,9 @@ function getVehicles(){
       '[]'
     );
 
-  }catch(error){
+  }
+
+  catch(error){
 
     return [];
 
@@ -1339,7 +2039,9 @@ function getLogs(){
       '[]'
     );
 
-  }catch(error){
+  }
+
+  catch(error){
 
     return [];
 
@@ -1366,8 +2068,9 @@ function setLogs(
 }
 
 
+
 /************************************************************
- * NORMALIZE PLATE
+ * PLATE NORMALIZE
  ************************************************************/
 
 function normalizePlate(
@@ -1392,8 +2095,145 @@ function normalizePlate(
 }
 
 
+
 /************************************************************
- * START CAMERA
+ * OCR WORKER
+ ************************************************************/
+
+async function initOCR(){
+
+  if(
+    ocrReady &&
+    ocrWorker
+  ){
+
+    return;
+
+  }
+
+
+  document
+  .getElementById(
+    'workerState'
+  )
+  .textContent =
+    'LOADING';
+
+
+  setOCRStatus(
+    'กำลังโหลด Thai OCR ครั้งแรก...'
+  );
+
+
+  ocrWorker =
+    await Tesseract
+    .createWorker(
+
+      'tha+eng',
+
+      1,
+
+      {
+
+        logger:
+        message => {
+
+          if(
+            message.status ===
+            'loading tesseract core'
+          ){
+
+            setOCRStatus(
+              'กำลังโหลด OCR Engine...'
+            );
+
+          }
+
+
+          else if(
+            message.status ===
+            'loading language traineddata'
+          ){
+
+            setOCRStatus(
+              'กำลังโหลดภาษาไทย...'
+            );
+
+          }
+
+
+          else if(
+            message.status ===
+            'initializing api'
+          ){
+
+            setOCRStatus(
+              'กำลังเตรียม OCR...'
+            );
+
+          }
+
+
+          else if(
+            message.status ===
+            'recognizing text'
+          ){
+
+            setOCRStatus(
+              'กำลังอ่านทะเบียน ' +
+              Math.round(
+                (
+                  message.progress ||
+                  0
+                ) *
+                100
+              ) +
+              '%'
+            );
+
+          }
+
+        }
+
+      }
+
+    );
+
+
+  await ocrWorker
+  .setParameters({
+
+    tessedit_pageseg_mode:
+    '7',
+
+    preserve_interword_spaces:
+    '0'
+
+  });
+
+
+  ocrReady =
+    true;
+
+
+  document
+  .getElementById(
+    'workerState'
+  )
+  .textContent =
+    'READY';
+
+
+  setOCRStatus(
+    'OCR พร้อม — รอรถเข้ากรอบ'
+  );
+
+}
+
+
+
+/************************************************************
+ * START AUTO GATE
  ************************************************************/
 
 async function startAutoGate(){
@@ -1403,7 +2243,7 @@ async function startAutoGate(){
   ){
 
     toast(
-      'ระบบกำลังทำงานอยู่'
+      'ระบบทำงานอยู่แล้ว'
     );
 
     return;
@@ -1411,21 +2251,37 @@ async function startAutoGate(){
   }
 
 
-  if(
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ){
-
-    toast(
-      'Browser นี้ไม่รองรับกล้อง'
+  const button =
+    document
+    .getElementById(
+      'startButton'
     );
 
-    return;
 
-  }
+  button.disabled =
+    true;
+
+
+  button.textContent =
+    'กำลังเตรียม OCR...';
 
 
   try{
+
+    await initOCR();
+
+
+    if(
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ){
+
+      throw new Error(
+        'Browser นี้ไม่รองรับ Camera API'
+      );
+
+    }
+
 
     stream =
       await navigator
@@ -1435,31 +2291,49 @@ async function startAutoGate(){
         video:{
 
           facingMode:
-          'environment',
-
-          width:{
+          {
             ideal:
-            1920
+            'environment'
           },
 
-          height:{
+          width:
+          {
             ideal:
-            1080
+            1280
+          },
+
+          height:
+          {
+            ideal:
+            720
+          },
+
+          frameRate:
+          {
+            ideal:
+            30
           }
 
         },
 
-        audio:false
+        audio:
+        false
 
       });
 
 
-    document
-    .getElementById(
-      'video'
-    )
-    .srcObject =
+    const video =
+      document
+      .getElementById(
+        'video'
+      );
+
+
+    video.srcObject =
       stream;
+
+
+    await video.play();
 
 
     autoRunning =
@@ -1471,29 +2345,40 @@ async function startAutoGate(){
     );
 
 
-    document
-    .getElementById(
-      'ocrStatus'
-    )
-    .textContent =
-      'ระบบอัตโนมัติเริ่มทำงานแล้ว';
-
-
-    scheduleNextScan(
-      1000
+    setOCRStatus(
+      'FAST SCAN ทำงานแล้ว — รอรถเข้ากรอบ'
     );
 
 
-  }catch(error){
+    scheduleNextScan(
+      300
+    );
+
+
+  }
+
+  catch(error){
 
     toast(
-      'เปิดกล้องไม่ได้: ' +
+      'เริ่มระบบไม่ได้: ' +
       error.message
     );
 
   }
 
+  finally{
+
+    button.disabled =
+      false;
+
+
+    button.textContent =
+      'เริ่มระบบอัตโนมัติ';
+
+  }
+
 }
+
 
 
 /************************************************************
@@ -1506,6 +2391,10 @@ function stopAutoGate(){
     false;
 
 
+  busy =
+    false;
+
+
   if(
     scanTimer
   ){
@@ -1513,6 +2402,7 @@ function stopAutoGate(){
     clearTimeout(
       scanTimer
     );
+
 
     scanTimer =
       null;
@@ -1541,11 +2431,9 @@ function stopAutoGate(){
   lastCandidate =
     '';
 
+
   confirmCount =
     0;
-
-  busy =
-    false;
 
 
   setScanIndicator(
@@ -1553,27 +2441,16 @@ function stopAutoGate(){
   );
 
 
-  document
-  .getElementById(
-    'confirmState'
-  )
-  .textContent =
-    '0/' +
-    REQUIRED_CONFIRMATIONS;
-
-
-  document
-  .getElementById(
-    'ocrStatus'
-  )
-  .textContent =
-    'หยุดระบบแล้ว';
+  setOCRStatus(
+    'ระบบหยุดทำงาน'
+  );
 
 }
 
 
+
 /************************************************************
- * SCHEDULE
+ * SCHEDULER
  ************************************************************/
 
 function scheduleNextScan(
@@ -1610,6 +2487,7 @@ function scheduleNextScan(
 }
 
 
+
 /************************************************************
  * AUTO SCAN
  ************************************************************/
@@ -1630,7 +2508,7 @@ async function autoScanCycle(){
   ){
 
     scheduleNextScan(
-      500
+      100
     );
 
     return;
@@ -1645,40 +2523,16 @@ async function autoScanCycle(){
   try{
 
     const scan =
-      await readPlateFromCamera();
+      await readPlateFast();
 
 
-    if(
-      !scan.plate
-    ){
-
-      lastCandidate =
-        '';
-
-      confirmCount =
-        0;
-
-
-      document
-      .getElementById(
-        'confirmState'
-      )
-      .textContent =
-        '0/' +
-        REQUIRED_CONFIRMATIONS;
-
-
-      document
-      .getElementById(
-        'ocrStatus'
-      )
-      .textContent =
-        'ยังไม่พบทะเบียนชัดเจน';
-
-
-      return;
-
-    }
+    document
+    .getElementById(
+      'ocrSpeed'
+    )
+    .textContent =
+      scan.duration +
+      ' ms';
 
 
     document
@@ -1690,12 +2544,47 @@ async function autoScanCycle(){
       '%';
 
 
+    if(
+      !scan.plate
+    ){
+
+      setOCRStatus(
+        'กำลังค้นหาป้ายทะเบียน...'
+      );
+
+
+      return;
+
+    }
+
+
     document
     .getElementById(
       'lastPlate'
     )
     .textContent =
       scan.plate;
+
+
+    setOCRStatus(
+      'อ่านได้ ' +
+      scan.plate +
+      ' • ' +
+      scan.confidence +
+      '% • ' +
+      scan.duration +
+      ' ms'
+    );
+
+
+    if(
+      scan.confidence <
+      MIN_CONFIDENCE
+    ){
+
+      return;
+
+    }
 
 
     if(
@@ -1705,37 +2594,18 @@ async function autoScanCycle(){
 
       confirmCount++;
 
-    }else{
+    }
+
+    else{
 
       lastCandidate =
         scan.plate;
+
 
       confirmCount =
         1;
 
     }
-
-
-    document
-    .getElementById(
-      'confirmState'
-    )
-    .textContent =
-      confirmCount +
-      '/' +
-      REQUIRED_CONFIRMATIONS;
-
-
-    document
-    .getElementById(
-      'ocrStatus'
-    )
-    .textContent =
-      'พบ: ' +
-      scan.plate +
-      ' | OCR ' +
-      scan.confidence +
-      '%';
 
 
     if(
@@ -1747,7 +2617,7 @@ async function autoScanCycle(){
         Date.now();
 
 
-      const lastTrigger =
+      const last =
         cooldownMap[
           scan.plate
         ] ||
@@ -1756,7 +2626,7 @@ async function autoScanCycle(){
 
       if(
         now -
-        lastTrigger >=
+        last >=
         COOLDOWN_MS
       ){
 
@@ -1766,45 +2636,34 @@ async function autoScanCycle(){
           now;
 
 
-        confirmCount =
-          0;
-
         lastCandidate =
           '';
 
 
-        document
-        .getElementById(
-          'confirmState'
-        )
-        .textContent =
-          '0/' +
-          REQUIRED_CONFIRMATIONS;
+        confirmCount =
+          0;
 
 
         checkAccessLocal(
-          scan.plate,
-          scan.confidence,
-          scan.raw
+          scan
         );
 
       }
 
     }
 
+  }
 
-  }catch(error){
+  catch(error){
 
-    document
-    .getElementById(
-      'ocrStatus'
-    )
-    .textContent =
+    setOCRStatus(
       'OCR Error: ' +
-      error.message;
+      error.message
+    );
 
+  }
 
-  }finally{
+  finally{
 
     busy =
       false;
@@ -1817,11 +2676,16 @@ async function autoScanCycle(){
 }
 
 
+
 /************************************************************
- * OCR
+ * FAST OCR
  ************************************************************/
 
-async function readPlateFromCamera(){
+async function readPlateFast(){
+
+  const started =
+    performance.now();
+
 
   const video =
     document
@@ -1840,131 +2704,144 @@ async function readPlateFromCamera(){
   const ctx =
     canvas
     .getContext(
-      '2d'
+      '2d',
+      {
+        willReadFrequently:
+        true
+      }
     );
 
 
-  const vw =
+  const width =
     video.videoWidth;
 
 
-  const vh =
+  const height =
     video.videoHeight;
 
 
   if(
-    !vw ||
-    !vh
+    !width ||
+    !height
   ){
 
     return {
+
       plate:'',
       confidence:0,
-      raw:''
+      raw:'',
+      duration:0
+
     };
 
   }
 
 
+  /*
+   * LARGE ROI
+   *
+   * ตรงกับกรอบใหญ่บนหน้าจอ
+   *
+   * X = 12% ถึง 88%
+   * Y = 50% ถึง 82%
+   */
+
   const sx =
     Math.floor(
-      vw *
-      .18
+      width *
+      .12
     );
 
 
   const sy =
     Math.floor(
-      vh *
-      .57
+      height *
+      .50
     );
 
 
   const sw =
     Math.floor(
-      vw *
-      .64
+      width *
+      .76
     );
 
 
   const sh =
     Math.floor(
-      vh *
-      .24
+      height *
+      .32
+    );
+
+
+  /*
+   * จำกัดขนาด OCR
+   * เพื่อไม่ให้กรอบใหญ่แล้วช้าเกินไป
+   */
+
+  const targetWidth =
+    Math.min(
+      1000,
+      Math.floor(
+        sw *
+        1.15
+      )
+    );
+
+
+  const ratio =
+    targetWidth /
+    sw;
+
+
+  const targetHeight =
+    Math.floor(
+      sh *
+      ratio
     );
 
 
   canvas.width =
-    sw *
-    2;
+    targetWidth;
 
 
   canvas.height =
-    sh *
-    2;
+    targetHeight;
 
 
-  ctx
-  .drawImage(
+  ctx.imageSmoothingEnabled =
+    true;
+
+
+  ctx.drawImage(
+
     video,
 
     sx,
     sy,
+
     sw,
     sh,
 
     0,
     0,
-    canvas.width,
-    canvas.height
+
+    targetWidth,
+    targetHeight
+
   );
 
 
-  preprocessCanvas(
+  preprocessFast(
     canvas,
     ctx
   );
 
 
   const result =
-    await Tesseract
+    await ocrWorker
     .recognize(
-
-      canvas,
-
-      'tha+eng',
-
-      {
-
-        logger:
-        progress => {
-
-          if(
-            progress.status ===
-            'recognizing text'
-          ){
-
-            document
-            .getElementById(
-              'ocrStatus'
-            )
-            .textContent =
-              'กำลังอ่านทะเบียน ' +
-              Math.round(
-                (
-                  progress.progress ||
-                  0
-                ) *
-                100
-              ) +
-              '%';
-
-          }
-
-        }
-
-      }
-
+      canvas
     );
 
 
@@ -1972,7 +2849,8 @@ async function readPlateFromCamera(){
     String(
       result.data.text ||
       ''
-    ).trim();
+    )
+    .trim();
 
 
   const confidence =
@@ -1982,34 +2860,49 @@ async function readPlateFromCamera(){
     );
 
 
+  const plate =
+    extractThaiPlate(
+      raw
+    );
+
+
+  const duration =
+    Math.round(
+      performance.now() -
+      started
+    );
+
+
   return {
 
     plate:
-      extractThaiPlate(
-        raw
-      ),
+      plate,
 
     confidence:
       confidence,
 
     raw:
-      raw
+      raw,
+
+    duration:
+      duration
 
   };
 
 }
 
 
+
 /************************************************************
- * IMAGE PREPROCESS
+ * IMAGE PROCESSING
  ************************************************************/
 
-function preprocessCanvas(
+function preprocessFast(
   canvas,
   ctx
 ){
 
-  const imageData =
+  const image =
     ctx
     .getImageData(
       0,
@@ -2020,7 +2913,7 @@ function preprocessCanvas(
 
 
   const data =
-    imageData.data;
+    image.data;
 
 
   for(
@@ -2029,56 +2922,78 @@ function preprocessCanvas(
     i += 4
   ){
 
-    const gray =
+    let gray =
+
       .299 *
-      data[i]
+      data[
+        i
+      ]
+
       +
+
       .587 *
-      data[i + 1]
+      data[
+        i + 1
+      ]
+
       +
+
       .114 *
-      data[i + 2];
+      data[
+        i + 2
+      ];
 
 
-    let value =
+    gray =
       (
         gray -
         128
-      ) *
-      1.8 +
+      )
+      *
+      1.55
+      +
       128;
 
 
-    value =
+    gray =
       Math.max(
         0,
         Math.min(
           255,
-          value
+          gray
         )
       );
 
 
-    data[i] =
-      value;
+    data[
+      i
+    ] =
+      gray;
 
-    data[i + 1] =
-      value;
 
-    data[i + 2] =
-      value;
+    data[
+      i + 1
+    ] =
+      gray;
+
+
+    data[
+      i + 2
+    ] =
+      gray;
 
   }
 
 
   ctx
   .putImageData(
-    imageData,
+    image,
     0,
     0
   );
 
 }
+
 
 
 /************************************************************
@@ -2094,7 +3009,11 @@ function extractThaiPlate(
       raw ||
       ''
     )
-    .toUpperCase()
+    .toUpperCase();
+
+
+  text =
+    text
     .replace(
       /ประเทศไทย|THAILAND/g,
       ' '
@@ -2127,7 +3046,7 @@ function extractThaiPlate(
       );
 
 
-    const match =
+    const thaiNormal =
       cleaned
       .match(
         /[ก-ฮ]{1,3}\d{1,4}/
@@ -2135,10 +3054,30 @@ function extractThaiPlate(
 
 
     if(
-      match
+      thaiNormal
     ){
 
-      return match[0];
+      return thaiNormal[
+        0
+      ];
+
+    }
+
+
+    const numericPrefix =
+      cleaned
+      .match(
+        /\d{1,2}[ก-ฮ]{1,2}\d{1,4}/
+      );
+
+
+    if(
+      numericPrefix
+    ){
+
+      return numericPrefix[
+        0
+      ];
 
     }
 
@@ -2152,6 +3091,9 @@ function extractThaiPlate(
         cleaned
       )
       &&
+      cleaned.length >=
+      3
+      &&
       cleaned.length <=
       9
     ){
@@ -2163,7 +3105,7 @@ function extractThaiPlate(
   }
 
 
-  const all =
+  const combined =
     text
     .replace(
       /[^ก-ฮA-Z0-9]/g,
@@ -2171,50 +3113,74 @@ function extractThaiPlate(
     );
 
 
-  const match =
-    all
+  const normal =
+    combined
     .match(
       /[ก-ฮ]{1,3}\d{1,4}/
     );
 
 
-  return match
-    ?
-    match[0]
-    :
-    '';
+  if(
+    normal
+  ){
+
+    return normal[
+      0
+    ];
+
+  }
+
+
+  const numeric =
+    combined
+    .match(
+      /\d{1,2}[ก-ฮ]{1,2}\d{1,4}/
+    );
+
+
+  if(
+    numeric
+  ){
+
+    return numeric[
+      0
+    ];
+
+  }
+
+
+  return '';
 
 }
 
 
+
 /************************************************************
- * CHECK ACCESS
+ * ACCESS CHECK
  ************************************************************/
 
 function checkAccessLocal(
-  plate,
-  confidence,
-  raw
+  scan
 ){
+
+  const plate =
+    normalizePlate(
+      scan.plate
+    );
+
 
   const vehicles =
     getVehicles();
 
 
-  const normalized =
-    normalizePlate(
-      plate
-    );
-
-
   const vehicle =
     vehicles
     .find(
-      row =>
+      item =>
       normalizePlate(
-        row.plate_no
+        item.plate_no
       ) ===
-      normalized
+      plate
     );
 
 
@@ -2238,10 +3204,12 @@ function checkAccessLocal(
       result =
         'GRANTED';
 
+
       reason =
         'REGISTERED_ACTIVE';
 
     }
+
 
     else if(
       vehicle.status ===
@@ -2253,6 +3221,7 @@ function checkAccessLocal(
 
     }
 
+
     else{
 
       reason =
@@ -2263,7 +3232,7 @@ function checkAccessLocal(
   }
 
 
-  const log = {
+  const record = {
 
     timestamp:
       new Date()
@@ -2277,30 +3246,19 @@ function checkAccessLocal(
       .value,
 
     plate_no:
-      normalized,
+      plate,
+
+    confidence:
+      scan.confidence,
+
+    duration:
+      scan.duration,
 
     result:
       result,
 
     reason:
-      reason,
-
-    confidence:
-      confidence,
-
-    owner_name:
-      vehicle
-      ?
-      vehicle.owner_name
-      :
-      '',
-
-    owner_type:
-      vehicle
-      ?
-      vehicle.owner_type
-      :
-      ''
+      reason
 
   };
 
@@ -2310,7 +3268,7 @@ function checkAccessLocal(
 
 
   logs.unshift(
-    log
+    record
   );
 
 
@@ -2331,7 +3289,7 @@ function checkAccessLocal(
       reason,
 
     plate_no:
-      normalized,
+      plate,
 
     vehicle:
       vehicle
@@ -2341,8 +3299,9 @@ function checkAccessLocal(
 }
 
 
+
 /************************************************************
- * SHOW RESULT
+ * DISPLAY RESULT
  ************************************************************/
 
 function showAccessResult(
@@ -2399,8 +3358,7 @@ function showAccessResult(
 
     ${
       escapeHtml(
-        result.plate_no ||
-        '—'
+        result.plate_no
       )
     }
 
@@ -2409,16 +3367,15 @@ function showAccessResult(
 
     <div>
 
-    <b>
-
     ${
-      escapeHtml(
-        result.reason ||
-        ''
+      granted
+      ?
+      'พบทะเบียนในระบบ — เปิดประตู'
+      :
+      translateReason(
+        result.reason
       )
     }
-
-    </b>
 
     </div>
 
@@ -2492,22 +3449,12 @@ function showAccessResult(
     ${
       escapeHtml(
         vehicle.owner_name ||
-        ''
+        '-'
       )
     }
     </b>
 
-    <br>
-
-    ประเภท:
-    ${
-      escapeHtml(
-        vehicle.owner_type ||
-        ''
-      )
-    }
-
-    <br>
+    <br><br>
 
     ทะเบียน:
     ${
@@ -2523,6 +3470,16 @@ function showAccessResult(
     ${
       escapeHtml(
         vehicle.province ||
+        ''
+      )
+    }
+
+    <br>
+
+    ประเภท:
+    ${
+      escapeHtml(
+        vehicle.owner_type ||
         ''
       )
     }
@@ -2560,13 +3517,62 @@ function showAccessResult(
 
     :
 
-    'ไม่พบทะเบียนในฐานข้อมูล';
+    `
+
+    <b>
+    ไม่พบทะเบียน
+    </b>
+
+    <br><br>
+
+    ${
+      escapeHtml(
+        result.plate_no
+      )
+    }
+
+    ไม่มีอยู่ในฐานข้อมูล
+
+    `;
 
 }
 
 
+
 /************************************************************
- * SAVE VEHICLE
+ * REASON
+ ************************************************************/
+
+function translateReason(
+  reason
+){
+
+  const map = {
+
+    NOT_REGISTERED:
+    'ไม่พบทะเบียนในระบบ',
+
+    BLACKLIST:
+    'ทะเบียนถูกระงับ / BLACKLIST',
+
+    INACTIVE:
+    'ทะเบียนยังไม่เปิดใช้งาน'
+
+  };
+
+
+  return map[
+    reason
+  ]
+  ||
+  reason;
+
+}
+
+
+
+/************************************************************
+ * ADMIN
  ************************************************************/
 
 function saveVehicle(){
@@ -2586,16 +3592,13 @@ function saveVehicle(){
   ){
 
     toast(
-      'กรุณากรอกทะเบียนรถ'
+      'กรุณากรอกทะเบียน'
     );
+
 
     return;
 
   }
-
-
-  const rows =
-    getVehicles();
 
 
   const record = {
@@ -2660,12 +3663,16 @@ function saveVehicle(){
   };
 
 
+  const rows =
+    getVehicles();
+
+
   const index =
     rows
     .findIndex(
-      row =>
+      item =>
       normalizePlate(
-        row.plate_no
+        item.plate_no
       ) ===
       plate
     );
@@ -2681,7 +3688,9 @@ function saveVehicle(){
     ] =
       record;
 
-  }else{
+  }
+
+  else{
 
     rows.unshift(
       record
@@ -2708,6 +3717,7 @@ function saveVehicle(){
 }
 
 
+
 /************************************************************
  * CLEAR FORM
  ************************************************************/
@@ -2715,12 +3725,14 @@ function saveVehicle(){
 function clearVehicleForm(){
 
   [
+
     'fPlate',
     'fProvince',
     'fOwner',
     'fBrand',
     'fModel',
     'fColor'
+
   ]
   .forEach(
     id => {
@@ -2752,6 +3764,7 @@ function clearVehicleForm(){
     'ACTIVE';
 
 }
+
 
 
 /************************************************************
@@ -2836,8 +3849,7 @@ function renderVehicles(){
       <td>
       ${
         escapeHtml(
-          vehicle.status ||
-          ''
+          vehicle.status
         )
       }
       </td>
@@ -2863,8 +3875,9 @@ function renderVehicles(){
 }
 
 
+
 /************************************************************
- * DELETE VEHICLE
+ * DELETE
  ************************************************************/
 
 function deleteVehicle(
@@ -2891,13 +3904,14 @@ function deleteVehicle(
 }
 
 
+
 /************************************************************
  * DEMO DATA
  ************************************************************/
 
 function seedDemo(){
 
-  const demo = [
+  const rows = [
 
     {
 
@@ -2927,6 +3941,7 @@ function seedDemo(){
 
     },
 
+
     {
 
       plate_no:
@@ -2955,6 +3970,7 @@ function seedDemo(){
 
     },
 
+
     {
 
       plate_no:
@@ -2964,19 +3980,19 @@ function seedDemo(){
       'กรุงเทพมหานคร',
 
       owner_name:
-      'Blacklist Demo',
+      'Black List Demo',
 
       owner_type:
       'VISITOR',
 
       brand:
-      '',
+      'Toyota',
 
       model:
       '',
 
       color:
-      '',
+      'ดำ',
 
       status:
       'BLACKLIST'
@@ -2987,7 +4003,7 @@ function seedDemo(){
 
 
   setVehicles(
-    demo
+    rows
   );
 
 
@@ -3001,8 +4017,9 @@ function seedDemo(){
 }
 
 
+
 /************************************************************
- * LOG
+ * LOGS
  ************************************************************/
 
 function renderLogs(){
@@ -3027,6 +4044,7 @@ function renderLogs(){
       <tr>
 
       <td>
+
       ${
         new Date(
           log.timestamp
@@ -3035,6 +4053,7 @@ function renderLogs(){
           'th-TH'
         )
       }
+
       </td>
 
       <td>
@@ -3056,17 +4075,19 @@ function renderLogs(){
       </td>
 
       <td>
+
       ${
         escapeHtml(
-          log.result
+          log.confidence
         )
-      }
+      }%
+
       </td>
 
       <td>
       ${
         escapeHtml(
-          log.reason
+          log.result
         )
       }
       </td>
@@ -3078,6 +4099,7 @@ function renderLogs(){
     .join('');
 
 }
+
 
 
 /************************************************************
@@ -3099,6 +4121,7 @@ function exportData(){
 
   const blob =
     new Blob(
+
       [
         JSON.stringify(
           data,
@@ -3106,10 +4129,12 @@ function exportData(){
           2
         )
       ],
+
       {
         type:
         'application/json'
       }
+
     );
 
 
@@ -3120,7 +4145,8 @@ function exportData(){
 
 
   const link =
-    document.createElement(
+    document
+    .createElement(
       'a'
     );
 
@@ -3143,15 +4169,16 @@ function exportData(){
 }
 
 
+
 /************************************************************
- * CLEAR DATA
+ * CLEAR ALL
  ************************************************************/
 
 function clearAllData(){
 
   if(
     !confirm(
-      'ล้างข้อมูลทะเบียนและ Log ทั้งหมด?'
+      'ยืนยันล้างข้อมูลทะเบียนและ Log ทั้งหมด?'
     )
   ){
 
@@ -3174,6 +4201,7 @@ function clearAllData(){
 
   renderVehicles();
 
+
   renderLogs();
 
 
@@ -3184,9 +4212,39 @@ function clearAllData(){
 }
 
 
+
 /************************************************************
- * SCAN INDICATOR
+ * UI
  ************************************************************/
+
+function setOCRStatus(
+  text
+){
+
+  document
+  .getElementById(
+    'ocrStatus'
+  )
+  .innerHTML =
+
+    `
+
+    <strong>
+    สถานะ
+    </strong>
+
+    <span>
+    ${
+      escapeHtml(
+        text
+      )
+    }
+    </span>
+
+    `;
+
+}
+
 
 function setScanIndicator(
   active
@@ -3209,21 +4267,17 @@ function setScanIndicator(
 
   document
   .getElementById(
-    'scanText'
+    'scanStatusText'
   )
   .textContent =
     active
     ?
-    'กำลังสแกน'
+    'FAST SCAN'
     :
-    'หยุดสแกน';
+    'หยุด';
 
 }
 
-
-/************************************************************
- * ESCAPE
- ************************************************************/
 
 function escapeHtml(
   value
@@ -3235,7 +4289,8 @@ function escapeHtml(
   )
   .replace(
     /[&<>"']/g,
-    char => ({
+    character =>
+    ({
 
       '&':
       '&amp;',
@@ -3253,16 +4308,12 @@ function escapeHtml(
       '&#039;'
 
     })[
-      char
+      character
     ]
   );
 
 }
 
-
-/************************************************************
- * TOAST
- ************************************************************/
 
 function toast(
   message
@@ -3290,14 +4341,15 @@ function toast(
         'none';
 
     },
-    3200
+    3000
   );
 
 }
 
 
+
 /************************************************************
- * INITIALIZE
+ * INITIAL LOAD
  ************************************************************/
 
 window
@@ -3315,4 +4367,5 @@ window
 </script>
 
 </body>
+
 </html>
